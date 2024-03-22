@@ -10,7 +10,7 @@ data class MainStateUI (
     var repliesCliked:Boolean=false,
     var likesCliked:Boolean=false,
     var likes:Int = 0,
-    var twits: Flow<List<TwitData>>,
+    var twits: List<TwitData> = listOf(),
     var showAddTwit:Boolean=false,
     var description:String=""
 )

@@ -10,15 +10,29 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val getTwitUseCase: GetTwitUseCase,private val addTwitUseCase:AddTwitUseCase) :ViewModel(){
-    private val _uiState = MutableStateFlow(MainStateUI(twits = getTwitUseCase.invoke()))
+    private val _uiState = MutableStateFlow(MainStateUI(twits = listOf() ))
     val uiState: StateFlow<MainStateUI> = _uiState.asStateFlow()
+    init {
+        viewModelScope.launch {
+            getTwitUseCase().onStart {
+                _uiState.value = _uiState.value.copy(
+                    twits = uiState.value.twits
+                )
+            }
+                .collect { items ->
+                   _uiState.value.twits = items
 
+                }
+        }
+    }
 
 
 

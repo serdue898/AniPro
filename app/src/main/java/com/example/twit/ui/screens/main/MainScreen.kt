@@ -27,13 +27,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.twit.R
@@ -46,8 +51,18 @@ import com.example.twit.utils.BottomAppBarLogin
 var viewmodel: MainViewModel? = null
 
 @Composable
-fun main(model: MainViewModel = viewModel(), navController: NavController) {
+fun Main(model: MainViewModel = hiltViewModel(), navController: NavController) {
     viewmodel = model
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val uiState by produceState<MainStateUI>(
+        initialValue = MainStateUI(),
+        key1 = lifecycle,
+        key2 = model
+    ) {
+        lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
+            model.uiState.collect { value = it }
+        }
+    }
     TwitTheme {
         // A surface container using the 'background' color from the theme
         Scaffold(
@@ -66,38 +81,42 @@ fun main(model: MainViewModel = viewModel(), navController: NavController) {
                 }
                  },
             content = {
-
-                DialogAddTwit(model)
-                Twit(it,model)
+                if (uiState.showAddTwit) {
+                    DialogAddTwit(model,uiState.description)
+                }
+                Twit(it,uiState)
             }
         )
     }
 }
 
 @Composable
-fun DialogAddTwit(model: MainViewModel){
-    val mainui= model.uiState.collectAsState()
-    if (mainui.value.showAddTwit){
-        Dialog(onDismissRequest = { model.showAddTwit(false) },) {
-            Column {
-                OutlinedTextField(value =mainui.value.description , onValueChange = {model.textDescription(it)})
-                Button(onClick = {
-                    model.addTwit(mainui.value.description)
-                    model.showAddTwit(false)
-                }) {
-                    Text(text = "enviar")
+fun DialogAddTwit(model: MainViewModel,description: String){
 
+
+        Dialog(onDismissRequest = { model.showAddTwit(false) }) {
+            Card{
+                Column (modifier = Modifier.padding(8.dp)){
+                    OutlinedTextField(
+                        value = description,
+                        onValueChange = { model.textDescription(it) })
+                    Button(onClick = {
+                        model.addTwit(description)
+                        model.showAddTwit(false)
+                    }, modifier = Modifier.align(Alignment.End)) {
+                        Text(text = "enviar")
+
+                    }
                 }
             }
         }
-    }
+
 }
 
 
 @Composable
-fun Twit(paddingValues: PaddingValues,model: MainViewModel) {
-    val stateui by model.uiState.collectAsState()
-    val items = stateui.twits.collectAsState(initial = listOf())
+fun Twit(paddingValues: PaddingValues,uiState: MainStateUI) {
+    val items = uiState.twits
     Column(modifier = Modifier.padding(8.dp)) {
         Row(verticalAlignment = Alignment.Top, modifier = Modifier.padding(8.dp)) {
             Image(
@@ -108,13 +127,15 @@ fun Twit(paddingValues: PaddingValues,model: MainViewModel) {
                     .size(40.dp)
             )
             Column {
-                LazyColumn {
-                    items(items = items.value, key = {item: TwitData -> item.id!! }){
+                LazyColumn(Modifier.padding(paddingValues)) {
+                    items(items = items, key = {item: TwitData -> item.id }){
+                        Card(modifier = Modifier.padding(8.dp)) {
 
-                        Content(
-                            it.description,
-                            ""
-                        )
+                            Content(
+                                it.description,
+                                "",uiState
+                            )
+                        }
 
                     }
 
@@ -126,7 +147,7 @@ fun Twit(paddingValues: PaddingValues,model: MainViewModel) {
 }
 
 @Composable
-fun Content(description: String, id: String) {
+fun Content(description: String, id: String,uiState:MainStateUI) {
     Row(modifier = Modifier.padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(text = "Aris")
         Text(text = "@AristiDevs", modifier = Modifier.padding(horizontal = 8.dp))
@@ -139,16 +160,13 @@ fun Content(description: String, id: String) {
         )
     }
     Text(text =description, modifier = Modifier.padding(8.dp))
-    Card {
-        Image(painter = painterResource(id = R.drawable.profile), contentDescription = null)
-    }
-    icons()
+    Icons(uiState)
 
 }
 
 @Composable
-fun icons() {
-    val gameUiState by viewmodel!!.uiState.collectAsState()
+fun Icons(gameUiState:MainStateUI) {
+
     Row(verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = { viewmodel?.newComent() }) {
             Icon(
