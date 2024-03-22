@@ -13,10 +13,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.twit.R
@@ -52,12 +58,41 @@ fun main(model: MainViewModel = viewModel(), navController: NavController) {
                     ruta = Route.MainScreen
                 )
             },
+            floatingActionButton = {
+                
+                FloatingActionButton(onClick = {model.showAddTwit(true)}) {
+                    Icon(imageVector = Icons.Rounded.Add, contentDescription =null )
+                    
+                }
+                 },
             content = {
+
+                DialogAddTwit(model)
                 Twit(it,model)
             }
         )
     }
 }
+
+@Composable
+fun DialogAddTwit(model: MainViewModel){
+    val mainui= model.uiState.collectAsState()
+    if (mainui.value.showAddTwit){
+        Dialog(onDismissRequest = { model.showAddTwit(false) },) {
+            Column {
+                OutlinedTextField(value =mainui.value.description , onValueChange = {model.textDescription(it)})
+                Button(onClick = {
+                    model.addTwit(mainui.value.description)
+                    model.showAddTwit(false)
+                }) {
+                    Text(text = "enviar")
+
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun Twit(paddingValues: PaddingValues,model: MainViewModel) {
@@ -74,7 +109,7 @@ fun Twit(paddingValues: PaddingValues,model: MainViewModel) {
             )
             Column {
                 LazyColumn {
-                    items(items = items.value, key = {item: TwitData -> item.id }){
+                    items(items = items.value, key = {item: TwitData -> item.id!! }){
 
                         Content(
                             it.description,
