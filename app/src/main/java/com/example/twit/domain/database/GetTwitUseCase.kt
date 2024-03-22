@@ -1,4 +1,4 @@
-package com.example.twit.domain
+package com.example.twit.domain.database
 
 import com.example.twit.data.database.TwitRepository
 import com.example.twit.data.database.entities.TwitEntity

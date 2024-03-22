@@ -1,7 +1,9 @@
 package com.example.twit.ui.screens.main
 
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,12 +16,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.twit.R
+import com.example.twit.data.network.response.node
 import com.example.twit.model.TwitData
 import com.example.twit.navigation.Route
 import com.example.twit.ui.theme.TwitTheme
@@ -39,9 +44,11 @@ import com.example.twit.utils.BottomAppBarLogin
 
 var viewmodel: MainViewModel? = null
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun main(model: MainViewModel = viewModel(), navController: NavController) {
     viewmodel = model
+    var mainStateui:MainStateUI = model.uiState.value
     TwitTheme {
         // A surface container using the 'background' color from the theme
         Scaffold(
@@ -53,41 +60,66 @@ fun main(model: MainViewModel = viewModel(), navController: NavController) {
                 )
             },
             content = {
-                Twit(it,model)
+                when (mainStateui) {
+                    is MainStateUI.Loading -> LoadingScreen(modifier = Modifier.fillMaxSize())
+                    is MainStateUI.Succes ->  Twit(it,model)
+                    else -> ErrorScreen(modifier = Modifier.fillMaxSize())
+                }
+
             }
         )
     }
 }
-
 @Composable
-fun Twit(paddingValues: PaddingValues,model: MainViewModel) {
-    val stateui by model.uiState.collectAsState()
-    val items = stateui.twits.collectAsState(initial = listOf())
-    Column(modifier = Modifier.padding(8.dp)) {
-        Row(verticalAlignment = Alignment.Top, modifier = Modifier.padding(8.dp)) {
-            Image(
-                painter = painterResource(id = R.drawable.profile),
-                contentDescription = null,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .size(40.dp)
-            )
-            Column {
-                LazyColumn {
-                    items(items = items.value, key = {item: TwitData -> item.id }){
-
-                        Content(
-                            it.description,
-                            ""
-                        )
-
-                    }
-
-                }
-            }
-        }
-        Divider(modifier = Modifier.fillMaxWidth())
+fun ErrorScreen(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize()){
+        Text(text = "Algo Fallo")
     }
+}
+@Composable
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxSize()){
+        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+        //LoadingIcon()
+    }
+}
+
+@SuppressLint("StateFlowValueCalledInComposition")
+@Composable
+fun Twit(paddingValues: PaddingValues, model: MainViewModel) {
+    var mainStateui:MainStateUI = model.uiState.value
+    when (mainStateui) {
+        is MainStateUI.Succes -> {
+            val items = mainStateui.animes.data
+            Column(modifier = Modifier.padding(8.dp)) {
+                Row(verticalAlignment = Alignment.Top, modifier = Modifier.padding(8.dp)) {
+                    Image(
+                        painter = painterResource(id = R.drawable.profile),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .size(40.dp)
+                    )
+                    Column {
+                        LazyColumn {
+                            items(items = items, key = {item: node -> item.id }){
+
+                                Content(
+                                    it.title,
+                                    ""
+                                )
+
+                            }
+
+                        }
+                    }
+                }
+                Divider(modifier = Modifier.fillMaxWidth())
+            }
+
+        }
+    }
+
 }
 
 @Composable
@@ -107,10 +139,10 @@ fun Content(description: String, id: String) {
     Card {
         Image(painter = painterResource(id = R.drawable.profile), contentDescription = null)
     }
-    icons()
+    //icons()
 
-}
 
+/*
 @Composable
 fun icons() {
     val gameUiState by viewmodel!!.uiState.collectAsState()
@@ -159,4 +191,6 @@ fun icons() {
         }
         Text(text = gameUiState.likes.toString())
     }
+
+ */
 }

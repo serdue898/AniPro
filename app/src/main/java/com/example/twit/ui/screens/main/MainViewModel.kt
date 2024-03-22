@@ -2,19 +2,45 @@ package com.example.twit.ui.screens.main
 
 
 import androidx.lifecycle.ViewModel
-import com.example.twit.domain.GetTwitUseCase
+import androidx.lifecycle.viewModelScope
+import com.example.twit.domain.database.GetTwitUseCase
+import com.example.twit.domain.network.getAnimeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val getTwitUseCase: GetTwitUseCase) :ViewModel(){
-    private val _uiState = MutableStateFlow(MainStateUI(twits = getTwitUseCase.invoke()))
+class MainViewModel @Inject constructor(private val getTwitUseCase: GetTwitUseCase,private val getAnimeUseCase: getAnimeUseCase) :ViewModel(){
+    private val _uiState = MutableStateFlow<MainStateUI>(MainStateUI.Loading)
     val uiState: StateFlow<MainStateUI> = _uiState.asStateFlow()
+    init {
+        getAnimes()
+    }
 
+    fun getAnimes(){
+        viewModelScope.launch {
+            _uiState.update {MainStateUI.Error}
+            _uiState.update {
+                try {
+                    val res =getAnimeUseCase.invoke()
+                    MainStateUI.Succes(twits = getTwitUseCase.invoke(), animes = res)
+                } catch (e: IOException) {
+                    MainStateUI.Error
+                } catch (e: HttpException) {
+                    MainStateUI.Error
+                }
+            }
+        }
+
+    }
+
+   /*
     fun newComent() {
         _uiState.update { current ->
             current.copy(
@@ -39,6 +65,8 @@ class MainViewModel @Inject constructor(private val getTwitUseCase: GetTwitUseCa
             )
         }
     }
+
+    */
 
 
 }
