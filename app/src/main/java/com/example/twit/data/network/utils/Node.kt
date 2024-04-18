@@ -1,4 +1,8 @@
-package com.example.twit.data.network.response
+package com.example.twit.data.network.utils
+
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
+
 
 data class paging(
     val previous:String,
@@ -6,9 +10,13 @@ data class paging(
 )
 
 
-data class node(
+data class Node(
+    @SerializedName("id")
+    @Expose
     val id: Int,
-    val title: String,
+    @SerializedName("title")
+    @Expose
+    val title: String?,
     val main_picture: main_picture?,
     val alternative_titles: alternative_titles?,
     val start_date: String?,
@@ -17,21 +25,21 @@ data class node(
     val mean: Float?,
     val rank: Int?,
     val popularity: Int?,
-    val num_list_users: Int,
-    val num_scoring_users: Int,
+    val num_list_users: Int?,
+    val num_scoring_users: Int?,
     val nsfw: String?,
-    val genres: Array<genre>,
-    val created_at: String,
-    val updated_at: String,
-    val media_type: String,
-    val status: String,
-    val num_episodes: Int,
+    val genres: Array<genre>?,
+    val created_at: String?,
+    val updated_at: String?,
+    val media_type: String?,
+    val status: String?,
+    val num_episodes: Int?,
     val start_season: start_season?,
     val broadcast:broadcast?,
     val source:String?,
     val average_episode_duration:Int?,
     val rating:String?,
-    val studios:Array<studio>
+    val studios:Array<studio>?
 
 )
 data class studio(val id:Int,val name:String)

@@ -3,6 +3,7 @@ package com.example.twit.utils
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -21,6 +22,14 @@ fun BottomAppBarLogin(navController: NavController, ruta: Route) {
                 Icon(imageVector = Icons.Filled.Home, contentDescription = null)
             }
             , label = { Text(text = "Home")}
+        )
+        NavigationBarItem(
+            selected = ruta == Route.SettingsScreen,
+            onClick = { navController.navigate(Route.SettingsScreen.route) },
+            icon = {
+                Icon(imageVector = Icons.Filled.Search, contentDescription = null)
+            }
+            , label = { Text(text = "Search")}
         )
         NavigationBarItem(
             selected = ruta == Route.SettingsScreen,
