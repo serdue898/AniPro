@@ -24,8 +24,8 @@ fun BottomAppBarLogin(navController: NavController, ruta: Route) {
             , label = { Text(text = "Home")}
         )
         NavigationBarItem(
-            selected = ruta == Route.SettingsScreen,
-            onClick = { navController.navigate(Route.SettingsScreen.route) },
+            selected = ruta == Route.SearchScreen,
+            onClick = { navController.navigate(Route.SearchScreen.route) },
             icon = {
                 Icon(imageVector = Icons.Filled.Search, contentDescription = null)
             }

@@ -1,11 +1,11 @@
 package com.example.twit.data.mappers
 
+import com.example.twit.data.network.response.AnimeResponse
 import com.example.twit.data.network.response.node
-import com.example.twit.data.network.utils.Node
 import com.example.twit.model.AnimeItem
 import javax.inject.Inject
 
-class RemoteItem2ToItemMapper @Inject constructor() : TemplateMapper<Node, AnimeItem> {
+class RemoteItem2ToItemMapper @Inject constructor() : TemplateMapper<AnimeResponse, AnimeItem> {
     override fun map(input: node): AnimeItem {
         return AnimeItem(
             id = input.id,
@@ -28,15 +28,11 @@ class RemoteItem2ToItemMapper @Inject constructor() : TemplateMapper<Node, Anime
             num_list_users = input.num_list_users,
             num_scoring_users = input.num_scoring_users,
             popularity = input.popularity,
-
             rank = input.rank,
             start_date = input.start_date,
             start_season = input.start_season,
             synopsis = input.synopsis,
             updated_at = input.updated_at
-
-
-
         )
     }
 }
