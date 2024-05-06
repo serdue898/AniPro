@@ -20,14 +20,15 @@ fun Settings(settingsViewModel: SettingsViewModel = viewModel(), navController: 
             modifier = Modifier.fillMaxSize(),
             bottomBar = { BottomAppBarLogin(navController = navController, ruta = Route.SettingsScreen) },
             content = {
-                Settingsmain(it)
+                SettingsMain(it)
             }
         )
 
 
     }
-}@Composable
-fun Settingsmain(paddingValues: PaddingValues) {
+}
+@Composable
+fun SettingsMain(paddingValues: PaddingValues) {
     Text(text = "unos ajustes muy bonitos")
 
 }

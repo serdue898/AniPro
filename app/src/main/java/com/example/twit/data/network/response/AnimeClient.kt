@@ -1,7 +1,5 @@
 package com.example.twit.data.network.response
 
-import com.example.twit.data.network.response.AnimeResponse
-import com.example.twit.data.network.utils.ApiResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -2,7 +2,6 @@ package com.example.twit.ui.screens.search
 
 
 import android.annotation.SuppressLint
-import android.widget.Spinner
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize

@@ -1,6 +1,8 @@
 package com.example.twit.data.database
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
 import com.example.twit.data.database.entities.TwitEntity
 import kotlinx.coroutines.flow.Flow
 

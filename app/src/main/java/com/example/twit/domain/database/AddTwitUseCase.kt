@@ -1,7 +1,6 @@
 package com.example.twit.domain.database
 
 import com.example.twit.data.database.TwitRepository
-import com.example.twit.data.database.entities.TwitEntity
 import com.example.twit.model.TwitData
 import javax.inject.Inject
 
