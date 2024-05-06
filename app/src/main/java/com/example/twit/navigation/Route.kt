@@ -1,8 +1,8 @@
 package com.example.twit.navigation
 
 sealed class Route (val route:String){
-    object LoginScreen:Route("login")
-    object MainScreen:Route("main")
-    object SettingsScreen:Route("settings")
-    object SearchScreen:Route("search")
+    data object LoginScreen:Route("login")
+    data object MainScreen:Route("main")
+    data object SettingsScreen:Route("settings")
+    data object SearchScreen:Route("search")
 }

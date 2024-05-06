@@ -27,8 +27,8 @@ class ApiHeaderInterceptor @Inject constructor() : Interceptor {
 
         var token: String?
         runBlocking {
-            token ="588d4a2c79f71df470f2013ce46a46ef"
-                ?: "1234" // TODO: Delete hardcoded Token when API login process works
+            token =
+                "588d4a2c79f71df470f2013ce46a46ef" // TODO: Delete hardcoded Token when API login process works
         }
         val headers =
             originalRequest.headers.newBuilder().add("X-MAL-CLIENT-ID", "$token")

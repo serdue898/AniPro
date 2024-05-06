@@ -17,7 +17,7 @@ inline fun <Api : Any, Data : Any> Response<Api>.handleRequest(mapper: (Api) -> 
                 )
             )
         } else {
-            var subCode: Int? = null
+            var subCode: String? = null
             var message: String? = null
             try {
                 val error =
@@ -25,8 +25,8 @@ inline fun <Api : Any, Data : Any> Response<Api>.handleRequest(mapper: (Api) -> 
                         this.errorBody()!!.charStream(),
                         ApiResponse::class.java
                     )
-                subCode = error.code!!
-                message = error.messages[0]
+                subCode = error.error
+                message = error.messages
             } catch (_: Exception) {
             }
             NetworkResult.Error(ApiError(code(), subCode, message ?: errorBody()?.string()))
@@ -51,9 +51,13 @@ inline fun <T : Any> NetworkResult<T>.handleNetworkResult(onSuccess: (T) -> Unit
     }
 }
 
-class CustomApiException(val apiError: ApiError) : Exception(
+class CustomApiException(apiError: ApiError) : Exception(
     "There was an error with code = ${apiError.code}, " +
             "sub code  = ${apiError.subCode} and message = ${apiError.message}"
 )
 
-data class ApiError(val code: Int? = null, val subCode: Int? = null, val message: String? = null)
+data class ApiError(
+    val code: Int? = null,
+    val subCode: String? = null,
+    val message: String? = null
+)

@@ -5,8 +5,10 @@ import com.google.gson.annotations.SerializedName
 import java.util.Date
 
 data class ApiResponse<T>(
-    @SerializedName("Messages")
-    var messages: List<String> = listOf(""),
+    @SerializedName("message")
+    var messages: String = "",
+    @SerializedName("error")
+    var error: String = "",
     @SerializedName("Response")
     var response: T? = null,
     @SerializedName("Total")

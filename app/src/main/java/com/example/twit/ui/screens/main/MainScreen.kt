@@ -41,7 +41,7 @@ var viewmodel: MainViewModel? = null
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun main(model: MainViewModel = hiltViewModel(), navController: NavController) {
+fun Main(model: MainViewModel = hiltViewModel(), navController: NavController) {
     viewmodel = model
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val uiState by produceState<MainStateUI>(
@@ -65,14 +65,14 @@ fun main(model: MainViewModel = hiltViewModel(), navController: NavController) {
             },
             content = {
                 when (uiState) {
-                    is com.example.twit.ui.screens.main.MainStateUI.Loading -> LoadingScreen(
+                    is MainStateUI.Loading -> LoadingScreen(
                         modifier = Modifier.fillMaxSize()
                     )
-                    is com.example.twit.ui.screens.main.MainStateUI.Succes -> Twit(
+                    is MainStateUI.Success -> Twit(
                         it,
                         uistate = uiState
                     )
-                    is com.example.twit.ui.screens.main.MainStateUI.Error -> ErrorScreen(modifier = Modifier.fillMaxSize())
+                    is MainStateUI.Error -> ErrorScreen(modifier = Modifier.fillMaxSize())
                 }
 
             }
@@ -99,7 +99,7 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
 @Composable
 fun Twit(paddingValues: PaddingValues, uistate: MainStateUI) {
     when (uistate) {
-        is com.example.twit.ui.screens.main.MainStateUI.Succes -> {
+        is MainStateUI.Success -> {
             val animes = uistate.animes
             LazyColumn(modifier = Modifier.padding(paddingValues).padding(8.dp)) {
                 items(items = animes, key = { item: AnimeItem -> item.id }) {
@@ -143,7 +143,7 @@ fun Content(description: String, id: String) {
             IconButton(onClick = { viewmodel?.newComent() }) {
                 Icon(
                     painter =
-                    if (!gameUiState.commentsCliked) {
+                    if (!gameUiState.commentsClicked) {
                         painterResource(R.drawable.ic_chat)
                     } else {
                         painterResource(R.drawable.ic_chat_filled)
@@ -157,7 +157,7 @@ fun Content(description: String, id: String) {
             IconButton(onClick = { viewmodel!!.changeReply() }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_rt), contentDescription = null, tint =
-                    if (!gameUiState.repliesCliked) {
+                    if (!gameUiState.repliesClicked) {
                         Color.Gray
                     } else {
                         Color.Green
@@ -169,13 +169,13 @@ fun Content(description: String, id: String) {
             IconButton(onClick = { viewmodel!!.changeLike() }) {
                 Icon(
                     painter =
-                    if (!gameUiState.likesCliked) {
+                    if (!gameUiState.likesClicked) {
                         painterResource(R.drawable.ic_like)
                     } else {
                         painterResource(R.drawable.ic_like_filled)
                     }, contentDescription = null,
                     tint =
-                    if (!gameUiState.likesCliked) {
+                    if (!gameUiState.likesClicked) {
                         Color.Gray
                     } else {
                         Color.Red

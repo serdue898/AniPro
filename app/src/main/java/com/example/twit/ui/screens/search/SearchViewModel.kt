@@ -73,7 +73,6 @@ class SearchViewModel @Inject constructor(
                 }
             }
         }
-
     }
     fun onSearch(s: String) {
         viewModelScope.launch {

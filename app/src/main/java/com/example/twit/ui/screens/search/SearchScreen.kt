@@ -2,6 +2,7 @@ package com.example.twit.ui.screens.search
 
 
 import android.annotation.SuppressLint
+import android.widget.Spinner
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,6 +46,7 @@ var viewmodel: SearchViewModel? = null
 fun Search(model: SearchViewModel = hiltViewModel(), navController: NavController) {
     viewmodel = model
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+
     val uiState by produceState<SearchStateUI>(
         initialValue = SearchStateUI.Loading,
         key1 = lifecycle,
@@ -97,7 +99,9 @@ fun Search(model: SearchViewModel = hiltViewModel(), navController: NavControlle
 @Composable
 fun ErrorScreen(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize()) {
-        Text(text = "Algo Fallo")
+        Text(text = "something goes wrong")
+
+
     }
 }
 
@@ -119,7 +123,7 @@ fun Twit(paddingValues: PaddingValues, uistate: SearchStateUI) {
                 .padding(8.dp)) {
                 items(items = animes, key = { item: AnimeItem -> item.id }) {
                     Content(
-                        it.title ?: "",
+                        it.title ?: "do you know this anime?",
                         it.main_picture?.medium ?: ""
                     )
                 }
@@ -130,7 +134,6 @@ fun Twit(paddingValues: PaddingValues, uistate: SearchStateUI) {
 
 @Composable
 fun Content(description: String, id: String) {
-
     Text(text = description, modifier = Modifier.padding(8.dp))
     if (id.isNotEmpty()) {
         Card {
@@ -138,7 +141,7 @@ fun Content(description: String, id: String) {
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(id)
                     .build(),
-                contentDescription = "anime",
+                contentDescription = "anime picture medium",
                 modifier = Modifier.fillMaxWidth(),
                 error = painterResource(id = R.drawable.ic_broken_image),
                 placeholder = painterResource(id = R.drawable.loading_img),
@@ -146,59 +149,4 @@ fun Content(description: String, id: String) {
             )
         }
     }
-
-    //icons()
-
-
-    /*
-    @Composable
-    fun icons() {
-        val gameUiState by viewmodel!!.uiState.collectAsState()
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { viewmodel?.newComent() }) {
-                Icon(
-                    painter =
-                    if (!gameUiState.commentsCliked) {
-                        painterResource(R.drawable.ic_chat)
-                    } else {
-                        painterResource(R.drawable.ic_chat_filled)
-                    },
-                    contentDescription = null,
-                    tint = Color.Gray
-                )
-            }
-            Text(text = gameUiState.comments.toString())
-            Spacer(modifier = Modifier.padding(horizontal = 16.dp))
-            IconButton(onClick = { viewmodel!!.changeReply() }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_rt), contentDescription = null, tint =
-                    if (!gameUiState.repliesCliked) {
-                        Color.Gray
-                    } else {
-                        Color.Green
-                    }
-                )
-            }
-            Text(text = gameUiState.replies.toString())
-            Spacer(modifier = Modifier.padding(horizontal = 16.dp))
-            IconButton(onClick = { viewmodel!!.changeLike() }) {
-                Icon(
-                    painter =
-                    if (!gameUiState.likesCliked) {
-                        painterResource(R.drawable.ic_like)
-                    } else {
-                        painterResource(R.drawable.ic_like_filled)
-                    }, contentDescription = null,
-                    tint =
-                    if (!gameUiState.likesCliked) {
-                        Color.Gray
-                    } else {
-                        Color.Red
-                    }
-                )
-            }
-            Text(text = gameUiState.likes.toString())
-        }
-
-     */
 }
