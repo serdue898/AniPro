@@ -10,30 +10,33 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import com.example.twit.navigation.Route
+import com.example.twit.navigation.MainScreen
+import com.example.twit.navigation.RouteType
+import com.example.twit.navigation.SearchScreen
+import com.example.twit.navigation.SettingsScreen
 
 @Composable
-fun BottomAppBarLogin(navController: NavController, ruta: Route) {
+fun BottomAppBarLogin(navController: NavController, ruta : RouteType) {
     NavigationBar {
         NavigationBarItem(
-            selected = ruta == Route.MainScreen,
-            onClick = { navController.navigate(Route.MainScreen.route) },
+            selected = ruta == MainScreen,
+            onClick = { navController.navigate(MainScreen) },
             icon = {
                 Icon(imageVector = Icons.Filled.Home, contentDescription = null)
             }
             , label = { Text(text = "Home")}
         )
         NavigationBarItem(
-            selected = ruta == Route.SearchScreen,
-            onClick = { navController.navigate(Route.SearchScreen.route) },
+            selected = ruta == SearchScreen,
+            onClick = { navController.navigate(SearchScreen) },
             icon = {
                 Icon(imageVector = Icons.Filled.Search, contentDescription = null)
             }
             , label = { Text(text = "Search")}
         )
         NavigationBarItem(
-            selected = ruta == Route.SettingsScreen,
-            onClick = { navController.navigate(Route.SettingsScreen.route) },
+            selected = ruta == SettingsScreen,
+            onClick = { navController.navigate(SettingsScreen) },
             icon = {
                 Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = null)
             }

@@ -31,7 +31,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.twit.R
 import com.example.twit.model.AnimeItem
-import com.example.twit.navigation.Route
+import com.example.twit.navigation.SearchScreen
 import com.example.twit.ui.theme.TwitTheme
 import com.example.twit.utils.BottomAppBarLogin
 import com.example.twit.utils.SearchBarAction
@@ -75,7 +75,7 @@ fun Search(model: SearchViewModel = hiltViewModel(), navController: NavControlle
             bottomBar = {
                 BottomAppBarLogin(
                     navController = navController,
-                    ruta = Route.SearchScreen
+                    ruta = SearchScreen
                 )
             },
             content = {

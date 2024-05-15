@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.twit.navigation.Route
+import com.example.twit.navigation.SettingsScreen
 import com.example.twit.ui.theme.TwitTheme
 import com.example.twit.utils.BottomAppBarLogin
 
@@ -18,7 +18,7 @@ fun Settings(settingsViewModel: SettingsViewModel = viewModel(), navController: 
         // A surface container using the 'background' color from the theme
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            bottomBar = { BottomAppBarLogin(navController = navController, ruta = Route.SettingsScreen) },
+            bottomBar = { BottomAppBarLogin(navController = navController, ruta = SettingsScreen) },
             content = {
                 SettingsMain(it)
             }

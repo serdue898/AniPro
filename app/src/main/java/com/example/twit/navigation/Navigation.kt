@@ -12,11 +12,11 @@ import com.example.twit.ui.screens.settings.Settings
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Route.LoginScreen.route) {
-        composable(Route.MainScreen.route) {Main(navController = navController)}
-        composable(Route.LoginScreen.route) { Login(navController = navController) }
-        composable(Route.SettingsScreen.route) { Settings(navController = navController) }
-        composable(Route.SearchScreen.route) { Search(navController = navController) }
+    NavHost(navController = navController, startDestination = LoginScreen) {
+        composable<MainScreen> {Main(navController = navController)}
+        composable<LoginScreen>{ Login(navController = navController) }
+        composable<SettingsScreen>{ Settings(navController = navController) }
+        composable<SearchScreen> { Search(navController = navController) }
     }
 
 }

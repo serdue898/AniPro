@@ -1,8 +1,20 @@
 package com.example.twit.navigation
 
-sealed class Route (val route:String){
-    data object LoginScreen:Route("login")
-    data object MainScreen:Route("main")
-    data object SettingsScreen:Route("settings")
-    data object SearchScreen:Route("search")
-}
+import kotlinx.serialization.Serializable
+
+
+
+@Serializable
+object LoginScreen:RouteType
+
+@Serializable
+object MainScreen:RouteType
+
+@Serializable
+object SettingsScreen:RouteType
+
+@Serializable
+object SearchScreen:RouteType
+
+@Serializable
+data class InfoScreen(val id:String):RouteType

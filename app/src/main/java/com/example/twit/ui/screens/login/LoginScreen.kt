@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.twit.R
-import com.example.twit.navigation.Route
+import com.example.twit.navigation.MainScreen
 import com.example.twit.ui.theme.TwitTheme
 
 
@@ -92,7 +92,7 @@ fun Content(model: LoginViewModel, navController: NavController) {
 
         Button(
             enabled = loginUiState.LogInEnable,
-            onClick = { navController.navigate(Route.MainScreen.route) },
+            onClick = { navController.navigate(MainScreen) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)

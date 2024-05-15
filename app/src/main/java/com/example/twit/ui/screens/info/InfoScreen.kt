@@ -1,5 +1,4 @@
-package com.example.twit.ui.screens.main
-
+package com.example.twit.ui.screens.info
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
@@ -14,6 +13,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
@@ -35,23 +35,21 @@ import com.example.twit.navigation.MainScreen
 import com.example.twit.ui.theme.TwitTheme
 import com.example.twit.utils.BottomAppBarLogin
 
-
-var viewmodel: MainViewModel? = null
-
-
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun Main(model: MainViewModel = hiltViewModel(), navController: NavController) {
-    viewmodel = model
+fun Info(model: InfoViewModel = hiltViewModel(), navController: NavController,idAnime: String) {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val uiState by produceState<MainStateUI>(
-        initialValue = MainStateUI.Loading,
+    val uiState by produceState<InfoStateUI>(
+        initialValue = InfoStateUI.Loading,
         key1 = lifecycle,
         key2 = model
     ) {
         lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
             model.uiState.collect { value = it }
         }
+    }
+    LaunchedEffect(key1 = true) {
+        model.getAnimeInfo(idAnime)
     }
     TwitTheme {
         // A surface container using the 'background' color from the theme
@@ -65,14 +63,14 @@ fun Main(model: MainViewModel = hiltViewModel(), navController: NavController) {
             },
             content = {
                 when (uiState) {
-                    is MainStateUI.Loading -> LoadingScreen(
+                    is InfoStateUI.Loading -> LoadingScreen(
                         modifier = Modifier.fillMaxSize()
                     )
-                    is MainStateUI.Success -> Twit(
+                    is InfoStateUI.Success -> Anime(
                         it,
-                        uistate = uiState
+                        uiState = uiState
                     )
-                    is MainStateUI.Error -> ErrorScreen(modifier = Modifier.fillMaxSize())
+                    is InfoStateUI.Error -> ErrorScreen(modifier = Modifier.fillMaxSize())
                 }
 
             }
@@ -86,22 +84,22 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
         Text(text = "Algo Fallo")
     }
 }
-
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize()) {
         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        //LoadingIcon()
     }
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun Twit(paddingValues: PaddingValues, uistate: MainStateUI) {
-    when (uistate) {
-        is MainStateUI.Success -> {
-            val animes = uistate.animes
-            LazyColumn(modifier = Modifier.padding(paddingValues).padding(8.dp)) {
+fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI) {
+    when (uiState) {
+        is InfoStateUI.Success -> {
+            val animes = uiState.animes
+            LazyColumn(modifier = Modifier
+                .padding(paddingValues)
+                .padding(8.dp)) {
                 items(items = animes, key = { item: AnimeItem -> item.id }) {
                     Content(
                         it.title ?: "",
@@ -132,58 +130,4 @@ fun Content(description: String, id: String) {
         }
     }
 
-    //icons()
-
-
-    /*
-    @Composable
-    fun icons() {
-        val gameUiState by viewmodel!!.uiState.collectAsState()
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { viewmodel?.newComent() }) {
-                Icon(
-                    painter =
-                    if (!gameUiState.commentsClicked) {
-                        painterResource(R.drawable.ic_chat)
-                    } else {
-                        painterResource(R.drawable.ic_chat_filled)
-                    },
-                    contentDescription = null,
-                    tint = Color.Gray
-                )
-            }
-            Text(text = gameUiState.comments.toString())
-            Spacer(modifier = Modifier.padding(horizontal = 16.dp))
-            IconButton(onClick = { viewmodel!!.changeReply() }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_rt), contentDescription = null, tint =
-                    if (!gameUiState.repliesClicked) {
-                        Color.Gray
-                    } else {
-                        Color.Green
-                    }
-                )
-            }
-            Text(text = gameUiState.replies.toString())
-            Spacer(modifier = Modifier.padding(horizontal = 16.dp))
-            IconButton(onClick = { viewmodel!!.changeLike() }) {
-                Icon(
-                    painter =
-                    if (!gameUiState.likesClicked) {
-                        painterResource(R.drawable.ic_like)
-                    } else {
-                        painterResource(R.drawable.ic_like_filled)
-                    }, contentDescription = null,
-                    tint =
-                    if (!gameUiState.likesClicked) {
-                        Color.Gray
-                    } else {
-                        Color.Red
-                    }
-                )
-            }
-            Text(text = gameUiState.likes.toString())
-        }
-
-     */
 }
