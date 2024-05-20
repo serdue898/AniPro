@@ -11,13 +11,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.twit.R
-import com.example.twit.navigation.Route
+import com.example.twit.navigation.MainScreen
 import com.example.twit.ui.theme.TwitTheme
 
 
@@ -93,7 +93,7 @@ fun Content(model: LoginViewModel, navController: NavController) {
 
         Button(
             enabled = loginUiState.LogInEnable,
-            onClick = { navController.navigate(Route.MainScreen.route) },
+            onClick = { navController.navigate(MainScreen) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -157,9 +157,9 @@ fun TextFieldPassword(
 @Composable
 fun DividerCustom() {
     Row {
-        Divider(modifier = Modifier.weight(1f))
+        HorizontalDivider(modifier = Modifier.weight(1f))
         Text(text = "OR", modifier = Modifier.padding(horizontal = 16.dp))
-        Divider(modifier = Modifier.weight(1f))
+        HorizontalDivider(modifier = Modifier.weight(1f))
     }
 
 }

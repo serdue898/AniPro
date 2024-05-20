@@ -1,8 +1,7 @@
-package com.example.twit.ui.screens.main
+package com.example.twit.ui.screens.search
 
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,22 +30,23 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.twit.R
 import com.example.twit.model.AnimeItem
-import com.example.twit.navigation.InfoScreen
-import com.example.twit.navigation.MainScreen
+import com.example.twit.navigation.SearchScreen
 import com.example.twit.ui.theme.TwitTheme
 import com.example.twit.utils.BottomAppBarLogin
+import com.example.twit.utils.SearchBarAction
 import androidx.lifecycle.compose.LocalLifecycleOwner
 
-var viewmodel: MainViewModel? = null
+var viewmodel: SearchViewModel? = null
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun Main(model: MainViewModel = hiltViewModel(), navController: NavController) {
+fun Search(model: SearchViewModel = hiltViewModel(), navController: NavController) {
     viewmodel = model
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val uiState by produceState<MainStateUI>(
-        initialValue = MainStateUI.Loading,
+
+    val uiState by produceState<SearchStateUI>(
+        initialValue = SearchStateUI.Loading,
         key1 = lifecycle,
         key2 = model
     ) {
@@ -58,23 +58,35 @@ fun Main(model: MainViewModel = hiltViewModel(), navController: NavController) {
         // A surface container using the 'background' color from the theme
         Scaffold(
             modifier = Modifier.fillMaxSize(),
+            topBar = {
+                if (uiState is SearchStateUI.Succes){
+                    SearchBarAction(
+                        query = (uiState as SearchStateUI.Succes).search,
+                        onQueryChange = { model.onSearchTextChange(it) },
+                        onSearch = { model.onSearch(it)},
+                        active = (uiState as SearchStateUI.Succes).isSearching,
+                        onActiveChange = { model.onToogleSearch() },
+                        list = (uiState as SearchStateUI.Succes).searchResult
+                    )
+                }
+            }
+            ,
             bottomBar = {
                 BottomAppBarLogin(
                     navController = navController,
-                    ruta = MainScreen
+                    ruta = SearchScreen
                 )
             },
             content = {
                 when (uiState) {
-                    is MainStateUI.Loading -> LoadingScreen(
+                    is SearchStateUI.Loading -> LoadingScreen(
                         modifier = Modifier.fillMaxSize()
                     )
-                    is MainStateUI.Success -> Twit(
+                    is SearchStateUI.Succes -> Twit(
                         it,
-                        uistate = uiState,
-                        navController = navController
+                        uistate = uiState
                     )
-                    is MainStateUI.Error -> ErrorScreen(modifier = Modifier.fillMaxSize())
+                    is SearchStateUI.Error -> ErrorScreen(modifier = Modifier.fillMaxSize())
                 }
 
             }
@@ -85,7 +97,9 @@ fun Main(model: MainViewModel = hiltViewModel(), navController: NavController) {
 @Composable
 fun ErrorScreen(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize()) {
-        Text(text = "Algo Fallo")
+        Text(text = "something goes wrong")
+
+
     }
 }
 
@@ -93,23 +107,22 @@ fun ErrorScreen(modifier: Modifier = Modifier) {
 fun LoadingScreen(modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxSize()) {
         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        //LoadingIcon()
     }
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun Twit(paddingValues: PaddingValues, uistate: MainStateUI, navController: NavController) {
+fun Twit(paddingValues: PaddingValues, uistate: SearchStateUI) {
     when (uistate) {
-        is MainStateUI.Success -> {
+        is SearchStateUI.Succes -> {
             val animes = uistate.animes
-            LazyColumn(modifier = Modifier.padding(paddingValues).padding(8.dp)) {
+            LazyColumn(modifier = Modifier
+                .padding(paddingValues)
+                .padding(8.dp)) {
                 items(items = animes, key = { item: AnimeItem -> item.id }) {
                     Content(
-                        it.title ?: "",
-                        it.main_picture?.medium ?: "",
-                            it.id,
-                        navController
+                        it.title ?: "do you know this anime?",
+                        it.main_picture?.medium ?: ""
                     )
                 }
             }
@@ -118,18 +131,15 @@ fun Twit(paddingValues: PaddingValues, uistate: MainStateUI, navController: NavC
 }
 
 @Composable
-fun Content(description: String, id: String, id_anime: Int, navController: NavController) {
-
+fun Content(description: String, id: String) {
     Text(text = description, modifier = Modifier.padding(8.dp))
     if (id.isNotEmpty()) {
-        Card (modifier = Modifier.clickable {
-            navController.navigate(InfoScreen(id_anime))
-        }){
+        Card {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(id)
                     .build(),
-                contentDescription = "anime",
+                contentDescription = "anime picture medium",
                 modifier = Modifier.fillMaxWidth(),
                 error = painterResource(id = R.drawable.ic_broken_image),
                 placeholder = painterResource(id = R.drawable.loading_img),
@@ -137,59 +147,4 @@ fun Content(description: String, id: String, id_anime: Int, navController: NavCo
             )
         }
     }
-
-    //icons()
-
-
-    /*
-    @Composable
-    fun icons() {
-        val gameUiState by viewmodel!!.uiState.collectAsState()
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { viewmodel?.newComent() }) {
-                Icon(
-                    painter =
-                    if (!gameUiState.commentsClicked) {
-                        painterResource(R.drawable.ic_chat)
-                    } else {
-                        painterResource(R.drawable.ic_chat_filled)
-                    },
-                    contentDescription = null,
-                    tint = Color.Gray
-                )
-            }
-            Text(text = gameUiState.comments.toString())
-            Spacer(modifier = Modifier.padding(horizontal = 16.dp))
-            IconButton(onClick = { viewmodel!!.changeReply() }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_rt), contentDescription = null, tint =
-                    if (!gameUiState.repliesClicked) {
-                        Color.Gray
-                    } else {
-                        Color.Green
-                    }
-                )
-            }
-            Text(text = gameUiState.replies.toString())
-            Spacer(modifier = Modifier.padding(horizontal = 16.dp))
-            IconButton(onClick = { viewmodel!!.changeLike() }) {
-                Icon(
-                    painter =
-                    if (!gameUiState.likesClicked) {
-                        painterResource(R.drawable.ic_like)
-                    } else {
-                        painterResource(R.drawable.ic_like_filled)
-                    }, contentDescription = null,
-                    tint =
-                    if (!gameUiState.likesClicked) {
-                        Color.Gray
-                    } else {
-                        Color.Red
-                    }
-                )
-            }
-            Text(text = gameUiState.likes.toString())
-        }
-
-     */
 }
