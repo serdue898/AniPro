@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -159,22 +161,22 @@ fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI) {
                             text = "Generos:",
                             modifier = Modifier.padding(4.dp)
                         )
-                        Row {
-                            for (genre in anime.genres) {
+                        LazyRow(modifier = Modifier.fillMaxWidth()) {
+                            items(items = anime.genres, key = { item -> item.id }) {
                                 Text(
-                                    text = "${genre.name}",
+                                    text = it.name,
                                     modifier = Modifier.padding(4.dp)
                                 )
                             }
                         }
+
                     }
                 }
                 Column {
                     val expanded = remember { mutableStateOf(true) }
                     Text(
                         text = "Sinopsis:${anime.synopsis}",
-                        modifier = Modifier
-                            .fillMaxHeight(0.4f),
+                        modifier = Modifier,
                         maxLines = if (expanded.value) 5 else Int.MAX_VALUE
                     )
                     IconButton(onClick = { expanded.value = !expanded.value }) {
