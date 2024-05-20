@@ -2,6 +2,7 @@ package com.example.twit.ui.screens.search
 
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,6 +36,7 @@ import com.example.twit.ui.theme.TwitTheme
 import com.example.twit.utils.BottomAppBarLogin
 import com.example.twit.utils.SearchBarAction
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.twit.navigation.InfoScreen
 
 var viewmodel: SearchViewModel? = null
 
@@ -84,7 +86,9 @@ fun Search(model: SearchViewModel = hiltViewModel(), navController: NavControlle
                     )
                     is SearchStateUI.Succes -> Twit(
                         it,
-                        uistate = uiState
+                        uistate = uiState,
+                        navController= navController
+
                     )
                     is SearchStateUI.Error -> ErrorScreen(modifier = Modifier.fillMaxSize())
                 }
@@ -112,7 +116,7 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun Twit(paddingValues: PaddingValues, uistate: SearchStateUI) {
+fun Twit(paddingValues: PaddingValues, uistate: SearchStateUI, navController: NavController) {
     when (uistate) {
         is SearchStateUI.Succes -> {
             val animes = uistate.animes
@@ -121,8 +125,10 @@ fun Twit(paddingValues: PaddingValues, uistate: SearchStateUI) {
                 .padding(8.dp)) {
                 items(items = animes, key = { item: AnimeItem -> item.id }) {
                     Content(
-                        it.title ?: "do you know this anime?",
-                        it.main_picture?.medium ?: ""
+                        it.id,
+                        it.title,
+                        it.main_picture.medium ?: "",
+                        navController
                     )
                 }
             }
@@ -131,13 +137,15 @@ fun Twit(paddingValues: PaddingValues, uistate: SearchStateUI) {
 }
 
 @Composable
-fun Content(description: String, id: String) {
-    Text(text = description, modifier = Modifier.padding(8.dp))
-    if (id.isNotEmpty()) {
-        Card {
+fun Content(id: Int, title: String, main_picture: String, navController: NavController) {
+    Text(text = title, modifier = Modifier.padding(8.dp))
+    if (main_picture.isNotEmpty()) {
+        Card (modifier = Modifier.clickable {
+            navController.navigate(InfoScreen(id))
+        }) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(id)
+                    .data(main_picture)
                     .build(),
                 contentDescription = "anime picture medium",
                 modifier = Modifier.fillMaxWidth(),

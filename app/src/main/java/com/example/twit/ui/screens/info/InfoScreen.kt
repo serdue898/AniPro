@@ -1,18 +1,31 @@
 package com.example.twit.ui.screens.info
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -31,9 +44,13 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +65,8 @@ import com.example.twit.navigation.MainScreen
 import com.example.twit.ui.theme.TwitTheme
 import com.example.twit.utils.BottomAppBarLogin
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.twit.ui.theme.md_theme_light_surfaceTint
+import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
 fun Info(model: InfoViewModel = hiltViewModel(), navController: NavController, idAnime: Int) {
@@ -112,81 +131,129 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
 fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI) {
 
     val anime = (uiState as InfoStateUI.Success).anime
-    if (anime.main_picture.medium.isNotEmpty()) {
-        Card(
+
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+            .padding(paddingValues)
+            .verticalScroll(
+                rememberScrollState()
+            )
+    ) {
+        Text(text = anime.title, modifier = Modifier.padding(8.dp))
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp)
-                .padding(paddingValues)
+                .fillMaxWidth()
+                .border(
+                    1.dp,
+                    Color.Black, RoundedCornerShape(8.dp)
+                )
         ) {
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp)
-                    .verticalScroll(
-                        rememberScrollState()
-                    )
+                    .fillMaxWidth(0.6f)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Center
             ) {
-                Row {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxWidth(0.4f)
-                    ) {
-                        Text(text = anime.title, modifier = Modifier.padding(8.dp))
-                        AsyncImage(
-                            model = ImageRequest.Builder(context = LocalContext.current)
-                                .data(anime.main_picture.medium)
-                                .build(),
-                            contentDescription = "anime",
-                            modifier = Modifier.size(100.dp),
-                            error = painterResource(id = R.drawable.ic_broken_image),
-                            placeholder = painterResource(id = R.drawable.loading_img),
-                            contentScale = ContentScale.Crop,
-                        )
-                    }
-                    Column {
-                        Text(
-                            text = "Fecha fin:${anime.end_date}",
-                            modifier = Modifier.padding(4.dp)
-                        )
-                        Text(
-                            text = "Fecha inicio:${anime.start_date}",
-                            modifier = Modifier.padding(4.dp)
-                        )
-                        Text(
-                            text = "Status:${anime.status}",
-                            modifier = Modifier.padding(4.dp)
-                        )
-                        Text(
-                            text = "Generos:",
-                            modifier = Modifier.padding(4.dp)
-                        )
-                        LazyRow(modifier = Modifier.fillMaxWidth()) {
-                            items(items = anime.genres, key = { item -> item.id }) {
-                                Text(
-                                    text = it.name,
-                                    modifier = Modifier.padding(4.dp)
-                                )
-                            }
-                        }
 
-                    }
-                }
-                Column {
-                    val expanded = remember { mutableStateOf(true) }
-                    Text(
-                        text = "Sinopsis:${anime.synopsis}",
-                        modifier = Modifier,
-                        maxLines = if (expanded.value) 5 else Int.MAX_VALUE
-                    )
-                    IconButton(onClick = { expanded.value = !expanded.value }) {
-                        Icon(
-                            imageVector = if (expanded.value)Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
-                            contentDescription = "down"
-                        )
-                    }
-                }
+                AsyncImage(
+                    model = ImageRequest.Builder(context = LocalContext.current)
+                        .data(anime.main_picture.medium)
+                        .build(),
+                    contentDescription = "anime",
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(
+                            RoundedCornerShape(8.dp)
+                        ),
+                    error = painterResource(id = R.drawable.ic_broken_image),
+                    placeholder = painterResource(id = R.drawable.loading_img),
+                    contentScale = ContentScale.Crop,
+                )
             }
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(8.dp)
+            ) {
+
+                Text(
+                    text = "Fecha fin:",
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(2.dp)
+                )
+                Text(
+                    text = anime.end_date,
+                    modifier = Modifier.padding(2.dp)
+                )
+                Text(
+                    text = "Fecha inicio:",
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(2.dp)
+                )
+                Text(
+                    text = anime.start_date,
+                    modifier = Modifier.padding(2.dp)
+                )
+                Text(
+                    text = "Status:",
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(2.dp)
+                )
+                Text(
+                    text = anime.status,
+                    modifier = Modifier.padding(2.dp)
+                )
+
+                Text(
+                    text = "Type: ${anime.media_type}",
+                    modifier = Modifier.padding(2.dp)
+                )
+
+
+            }
+        }
+        Text(
+            text = "Generos:",
+            modifier = Modifier.padding(2.dp)
+        )
+
+        FlowRow(
+            modifier = Modifier.padding( 2.dp).align(Alignment.CenterHorizontally),
+            mainAxisSpacing = 8.dp, // Espacio horizontal entre los ítems
+            crossAxisSpacing = 4.dp, // Espacio vertical entre las filas
+        ) {
+            anime.genres.forEach {
+                Text(
+                    text = it.name,
+                    color = md_theme_light_surfaceTint
+                )
+            }
+        }
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .animateContentSize()
+        ) {
+            val expanded = remember { mutableStateOf(true) }
+            val rotationAngle by animateFloatAsState(targetValue = if (!expanded.value) 180f else 0f)
+            Text(
+                text = "Sinopsis:${anime.synopsis}",
+                modifier = Modifier,
+                maxLines = if (expanded.value) 5 else Int.MAX_VALUE
+            )
+            IconButton(onClick = { expanded.value = !expanded.value }) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = "down",
+                    modifier = Modifier.rotate(rotationAngle)
+                )
+            }
+
+
         }
     }
 }
@@ -194,7 +261,7 @@ fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI) {
 @Preview(showBackground = true)
 @Composable
 fun Content() {
-    Info( navController = NavController(LocalContext.current), idAnime = 1)
+    Info(navController = NavController(LocalContext.current), idAnime = 1)
 
 
 }
