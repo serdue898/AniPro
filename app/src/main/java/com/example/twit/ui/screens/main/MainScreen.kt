@@ -2,6 +2,7 @@ package com.example.twit.ui.screens.main
 
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,10 +31,11 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.twit.R
 import com.example.twit.model.AnimeItem
+import com.example.twit.navigation.InfoScreen
 import com.example.twit.navigation.MainScreen
 import com.example.twit.ui.theme.TwitTheme
 import com.example.twit.utils.BottomAppBarLogin
-
+import androidx.lifecycle.compose.LocalLifecycleOwner
 
 var viewmodel: MainViewModel? = null
 
@@ -70,7 +71,8 @@ fun Main(model: MainViewModel = hiltViewModel(), navController: NavController) {
                     )
                     is MainStateUI.Success -> Twit(
                         it,
-                        uistate = uiState
+                        uistate = uiState,
+                        navController = navController
                     )
                     is MainStateUI.Error -> ErrorScreen(modifier = Modifier.fillMaxSize())
                 }
@@ -97,7 +99,7 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun Twit(paddingValues: PaddingValues, uistate: MainStateUI) {
+fun Twit(paddingValues: PaddingValues, uistate: MainStateUI, navController: NavController) {
     when (uistate) {
         is MainStateUI.Success -> {
             val animes = uistate.animes
@@ -105,7 +107,9 @@ fun Twit(paddingValues: PaddingValues, uistate: MainStateUI) {
                 items(items = animes, key = { item: AnimeItem -> item.id }) {
                     Content(
                         it.title ?: "",
-                        it.main_picture?.medium ?: ""
+                        it.main_picture?.medium ?: "",
+                            it.id,
+                        navController
                     )
                 }
             }
@@ -114,11 +118,13 @@ fun Twit(paddingValues: PaddingValues, uistate: MainStateUI) {
 }
 
 @Composable
-fun Content(description: String, id: String) {
+fun Content(description: String, id: String, id_anime: Int, navController: NavController) {
 
     Text(text = description, modifier = Modifier.padding(8.dp))
     if (id.isNotEmpty()) {
-        Card {
+        Card (modifier = Modifier.clickable {
+            navController.navigate(InfoScreen(id_anime))
+        }){
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(id)

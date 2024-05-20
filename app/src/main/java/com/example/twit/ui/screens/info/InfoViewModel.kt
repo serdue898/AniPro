@@ -4,6 +4,7 @@ package com.example.twit.ui.screens.info
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.twit.domain.database.GetTwitUseCase
+import com.example.twit.domain.network.getAnimeInfoUseCase
 import com.example.twit.domain.network.getAnimeRankingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,21 +18,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InfoViewModel @Inject constructor(
-    private val getTwitUseCase: GetTwitUseCase,
-    private val getAnimeRankingUseCase: getAnimeRankingUseCase
+    private val getAnimeInfoUseCase: getAnimeInfoUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<InfoStateUI>(InfoStateUI.Loading)
     val uiState: StateFlow<InfoStateUI> = _uiState.asStateFlow()
 
 
 
-    fun getAnimeInfo(id: String) {
+    fun getAnimeInfo(id: Int) {
         viewModelScope.launch {
             _uiState.update { InfoStateUI.Loading }
             _uiState.update {
                 try {
-                    val res = getAnimeRankingUseCase()
-                    InfoStateUI.Success(twits = getTwitUseCase.invoke(), animes = res)
+                    InfoStateUI.Success(anime = getAnimeInfoUseCase.invoke(anime_id = id))
                 } catch (e: IOException) {
                     InfoStateUI.Error
                 } catch (e: HttpException) {

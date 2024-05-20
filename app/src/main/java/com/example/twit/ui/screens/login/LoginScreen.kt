@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -156,9 +157,9 @@ fun TextFieldPassword(
 @Composable
 fun DividerCustom() {
     Row {
-        Divider(modifier = Modifier.weight(1f))
+        HorizontalDivider(modifier = Modifier.weight(1f))
         Text(text = "OR", modifier = Modifier.padding(horizontal = 16.dp))
-        Divider(modifier = Modifier.weight(1f))
+        HorizontalDivider(modifier = Modifier.weight(1f))
     }
 
 }

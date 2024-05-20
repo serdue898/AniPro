@@ -32,4 +32,14 @@ class AnimeRepository @Inject constructor(
         data.handleNetworkResult { data -> result = data }
         return result!!
     }
+
+    suspend fun getAnimeInfo(animeId: Int): AnimeItem {
+        var result: AnimeItem? = null
+        val resultApi = remoteItemsApi.getAnimeInfo(animeId)
+        val data = resultApi.handleRequest { data ->
+            remoteItem2ItemMapper.map(data)
+        }
+        data.handleNetworkResult { data -> result = data }
+        return result!!
+    }
 }

@@ -13,8 +13,7 @@ open class InfoStateUI {
             var repliesClicked:Boolean=false,
             var likesClicked:Boolean=false,
             var likes:Int = 0,
-            var twits: Flow<List<TwitData>>,
-            var animes: List<AnimeItem>
+            var anime:AnimeItem
         ):InfoStateUI()
         object Error : InfoStateUI()
         object Loading : InfoStateUI()

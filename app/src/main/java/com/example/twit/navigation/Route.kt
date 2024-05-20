@@ -17,4 +17,4 @@ object SettingsScreen:RouteType
 object SearchScreen:RouteType
 
 @Serializable
-data class InfoScreen(val id:String):RouteType
+data class InfoScreen(val id:Int):RouteType
