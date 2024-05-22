@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -35,7 +36,6 @@ import com.example.twit.navigation.InfoScreen
 import com.example.twit.navigation.MainScreen
 import com.example.twit.ui.theme.TwitTheme
 import com.example.twit.utils.BottomAppBarLogin
-import androidx.lifecycle.compose.LocalLifecycleOwner
 
 var viewmodel: MainViewModel? = null
 

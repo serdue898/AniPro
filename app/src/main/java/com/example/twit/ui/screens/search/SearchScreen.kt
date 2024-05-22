@@ -25,18 +25,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.twit.R
 import com.example.twit.model.AnimeItem
+import com.example.twit.navigation.InfoScreen
 import com.example.twit.navigation.SearchScreen
 import com.example.twit.ui.theme.TwitTheme
 import com.example.twit.utils.BottomAppBarLogin
 import com.example.twit.utils.SearchBarAction
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.example.twit.navigation.InfoScreen
 
 var viewmodel: SearchViewModel? = null
 

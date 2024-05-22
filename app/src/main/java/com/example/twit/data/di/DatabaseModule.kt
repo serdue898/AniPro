@@ -2,8 +2,8 @@ package com.example.twit.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.twit.data.database.TwitDao
-import com.example.twit.data.database.TwitDatabase
+import com.example.twit.data.database.AnimeDao
+import com.example.twit.data.database.AnimeDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,12 +16,12 @@ import javax.inject.Singleton
 class DatabaseModule {
     @Provides
     @Singleton
-    fun provideTwitDatabase(@ApplicationContext appContext:Context): TwitDatabase {
-        return Room.databaseBuilder(appContext, TwitDatabase::class.java,"TwitDatabase").build()
+    fun provideTwitDatabase(@ApplicationContext appContext:Context): AnimeDatabase {
+        return Room.databaseBuilder(appContext, AnimeDatabase::class.java,"TwitDatabase").build()
 
     }
     @Provides
-    fun provideTwitDao(twitDatabase: TwitDatabase): TwitDao {
+    fun provideTwitDao(twitDatabase: AnimeDatabase): AnimeDao {
         return twitDatabase.TwitDao()
     }
 }

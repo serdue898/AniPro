@@ -3,34 +3,24 @@ package com.example.twit.ui.screens.info
 import android.annotation.SuppressLint
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,21 +41,23 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.twit.R
-import com.example.twit.model.AnimeItem
-import com.example.twit.navigation.MainScreen
+import com.example.twit.navigation.InfoScreen
 import com.example.twit.ui.theme.TwitTheme
-import com.example.twit.utils.BottomAppBarLogin
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.twit.ui.theme.md_theme_light_surfaceTint
+import com.example.twit.utils.BottomAppBarLogin
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
@@ -90,7 +82,7 @@ fun Info(model: InfoViewModel = hiltViewModel(), navController: NavController, i
             bottomBar = {
                 BottomAppBarLogin(
                     navController = navController,
-                    ruta = MainScreen
+                    ruta = InfoScreen(idAnime)
                 )
             },
             content = {
@@ -216,13 +208,10 @@ fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI) {
 
             }
         }
-        Text(
-            text = "Generos:",
-            modifier = Modifier.padding(2.dp)
-        )
-
         FlowRow(
-            modifier = Modifier.padding( 2.dp).align(Alignment.CenterHorizontally),
+            modifier = Modifier
+                .padding(2.dp)
+                .align(Alignment.CenterHorizontally),
             mainAxisSpacing = 8.dp, // Espacio horizontal entre los ítems
             crossAxisSpacing = 4.dp, // Espacio vertical entre las filas
         ) {
@@ -233,35 +222,88 @@ fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI) {
                 )
             }
         }
+        CustomOutlinedBox(
+            modifier = Modifier.padding(top=16.dp , start = 8.dp, end = 8.dp),
+            cornerText = "Synopsis"
+        ) {
         Column(
             modifier = Modifier
-                .padding(8.dp)
+                .padding(start = 8.dp, end = 8.dp, top = 8.dp)
                 .animateContentSize()
         ) {
-            val expanded = remember { mutableStateOf(true) }
-            val rotationAngle by animateFloatAsState(targetValue = if (!expanded.value) 180f else 0f)
-            Text(
-                text = "Sinopsis:${anime.synopsis}",
-                modifier = Modifier,
-                maxLines = if (expanded.value) 5 else Int.MAX_VALUE
-            )
-            IconButton(onClick = { expanded.value = !expanded.value }) {
-                Icon(
-                    imageVector = Icons.Default.KeyboardArrowDown,
-                    contentDescription = "down",
-                    modifier = Modifier.rotate(rotationAngle)
+
+                val expanded = remember { mutableStateOf(true) }
+                val rotationAngle by animateFloatAsState(targetValue = if (!expanded.value) 180f else 0f,
+                    label = ""
                 )
-            }
-
-
+                Text(
+                    text = anime.synopsis,
+                    modifier = Modifier,
+                    maxLines = if (expanded.value) 3 else Int.MAX_VALUE
+                )
+                IconButton(onClick = { expanded.value = !expanded.value }, modifier = Modifier.align(Alignment.CenterHorizontally)) {
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = "down",
+                        modifier = Modifier.rotate(rotationAngle)
+                    )
+                }
         }
+            }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun Content() {
-    Info(navController = NavController(LocalContext.current), idAnime = 1)
+//    CustomOutlinedBox(
+//        modifier = Modifier.padding(16.dp),
+//        cornerText = "Nombre"
+//    )
 
 
 }
+@Composable
+fun CustomOutlinedBox(
+    modifier: Modifier = Modifier,
+    borderColor: Color = Color.Black,
+    borderWidth: Float = 1f,
+    cornerText: String,
+    cornerTextBackgroundColor: Color = Color.White,
+    content: @Composable () -> Unit
+) {
+
+    Box(modifier = modifier) {
+        // Main box with border
+        Box(
+            modifier = Modifier
+                .border(
+                    BorderStroke(borderWidth.dp, borderColor),
+                    shape = RoundedCornerShape(4.dp)
+                )
+                .padding(top = 8.dp) // Adjust padding to create space for the label
+                .padding(horizontal = 8.dp, vertical = 4.dp) // Content padding
+        ) {
+            // Content inside the box
+            content()
+        }
+        // Label box
+        Box(
+            modifier = Modifier
+                .padding(start = 8.dp) // Position the label
+                .offset(y = (-8).dp)
+                .background(cornerTextBackgroundColor)
+                .zIndex(1f) // Ensure the label is drawn on top
+        ) {
+            Text(
+                text = cornerText,
+                fontSize = 12.sp,
+                color = borderColor,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 4.dp)
+            )
+        }
+
+}
+}
+

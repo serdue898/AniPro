@@ -1,8 +1,6 @@
 package com.example.twit.ui.screens.info
 
 import com.example.twit.model.AnimeItem
-import com.example.twit.model.TwitData
-import kotlinx.coroutines.flow.Flow
 
 open class InfoStateUI {
 
@@ -17,7 +15,4 @@ open class InfoStateUI {
         ):InfoStateUI()
         object Error : InfoStateUI()
         object Loading : InfoStateUI()
-
-
-
 }

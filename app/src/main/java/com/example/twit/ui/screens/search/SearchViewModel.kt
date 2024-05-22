@@ -3,7 +3,7 @@ package com.example.twit.ui.screens.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.twit.domain.database.GetTwitUseCase
+import com.example.twit.domain.database.GetAnimeUseCase
 import com.example.twit.domain.network.getAnimeRankingUseCase
 import com.example.twit.domain.network.getAnimeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val getTwitUseCase: GetTwitUseCase,
+    private val getTwitUseCase: GetAnimeUseCase,
     private val getAnimeUseCase: getAnimeUseCase,
     private val getAnimeRankingUseCase: getAnimeRankingUseCase
 ) : ViewModel() {
