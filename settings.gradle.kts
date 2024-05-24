@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "twit"
+rootProject.name = "anipro"
 include(":app")
  
