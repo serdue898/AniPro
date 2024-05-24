@@ -25,15 +25,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.twit.R
+import com.example.twit.navigation.CalendarScreen
 import com.example.twit.navigation.MainScreen
 import com.example.twit.ui.theme.TwitTheme
+import com.example.twit.ui.theme.animeTypography
 
 
 @Composable
@@ -57,11 +61,10 @@ fun Content(model: LoginViewModel, navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.insta),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint( color = if(isSystemInDarkTheme()) Color.White else Color.Black)
-        )
+        Text(text = stringResource(id = R.string.app_name),
+            fontFamily = animeTypography.bodyLarge.fontFamily,
+            fontSize = 60.sp,
+            fontWeight = animeTypography.bodyLarge.fontWeight,)
 
         TextFieldEmail(
             value = loginUiState.email,
@@ -92,7 +95,7 @@ fun Content(model: LoginViewModel, navController: NavController) {
 
         Button(
             enabled = loginUiState.LogInEnable,
-            onClick = { navController.navigate(MainScreen) },
+            onClick = { navController.navigate(CalendarScreen) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)

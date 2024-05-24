@@ -11,7 +11,6 @@ open class SearchStateUI{
         var repliesCliked:Boolean=false,
         var likesCliked:Boolean=false,
         var likes:Int = 0,
-        var twits: Flow<List<TwitData>>,
         var animes: List<AnimeItem>,
         var search : String = "",
         val isSearching:Boolean = false,

@@ -26,6 +26,8 @@ graphicsShapesDesktop = "1.0.0-beta01"
 kotlinSerialization = "1.6.3"
 volley = "1.2.1"
 accompanist = "0.26.2-beta"
+leanback = "1.0.0"
+benchmarkMacro = "1.2.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,6 +65,8 @@ kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-j
 volley = { group = "com.android.volley", name = "volley", version.ref = "volley" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilVersion" }
 accompanist-flowlayout = { group = "com.google.accompanist", name = "accompanist-flowlayout", version.ref = "accompanist" }
+androidx-leanback = { group = "androidx.leanback", name = "leanback", version.ref = "leanback" }
+androidx-benchmark-macro = { group = "androidx.benchmark", name = "benchmark-macro", version.ref = "benchmarkMacro" }
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

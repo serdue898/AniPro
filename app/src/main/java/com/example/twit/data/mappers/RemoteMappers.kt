@@ -17,7 +17,7 @@ import com.example.twit.model.start_season
 import com.example.twit.model.studio
 import javax.inject.Inject
 
-class RemoteItem2ToItemMapper @Inject constructor() : TemplateMapper<AnimeResponse, AnimeItem> {
+class RemoteItem2ToItemMapper @Inject constructor() : TemplateMapper<Node, AnimeItem> {
     override fun map(input: Node): AnimeItem {
         return AnimeItem(
             id = input.id,

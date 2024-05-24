@@ -33,7 +33,7 @@ class MainViewModel @Inject constructor(
             _uiState.update {
                 try {
                     val res = getAnimeRankingUseCase()
-                    MainStateUI.Success(twits = getTwitUseCase.invoke(), animes = res)
+                    MainStateUI.Success( animes = res)
                 } catch (e: IOException) {
                     MainStateUI.Error
                 } catch (e: HttpException) {

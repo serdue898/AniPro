@@ -18,14 +18,20 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,10 +47,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -56,6 +64,7 @@ import coil.request.ImageRequest
 import com.example.twit.R
 import com.example.twit.navigation.InfoScreen
 import com.example.twit.ui.theme.TwitTheme
+import com.example.twit.ui.theme.animeTypography
 import com.example.twit.ui.theme.md_theme_light_surfaceTint
 import com.example.twit.utils.BottomAppBarLogin
 import com.google.accompanist.flowlayout.FlowRow
@@ -85,18 +94,32 @@ fun Info(model: InfoViewModel = hiltViewModel(), navController: NavController, i
                     ruta = InfoScreen(idAnime)
                 )
             },
+            floatingActionButton = {
+                if (uiState is InfoStateUI.Success) {
+                    FloatingActionButton(onClick = {
+                        model.showPopUp()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "down"
+                        )
+                    }
+                }
+            },
             content = {
                 when (uiState) {
                     is InfoStateUI.Loading -> LoadingScreen(
                         modifier = Modifier.fillMaxSize()
                     )
 
-                    is InfoStateUI.Success -> Anime(
-                        it,
-                        uiState = uiState
-                    )
-
                     is InfoStateUI.Error -> ErrorScreen(modifier = Modifier.fillMaxSize())
+
+                    else -> {
+                        Anime(
+                            it,
+                            uiState = uiState,model
+                        )
+                    }
                 }
 
             }
@@ -120,10 +143,32 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI) {
+fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI,model: InfoViewModel) {
+    val anime =if (uiState is InfoStateUI.ShowPopup) {uiState.anime }else{ (uiState as InfoStateUI.Success).anime}
 
-    val anime = (uiState as InfoStateUI.Success).anime
+    if (uiState is InfoStateUI.ShowPopup) {
+        val text = remember { mutableStateOf("") }
+        Dialog(onDismissRequest = { model.dismissPopUp() }) {
+            Column {
+                TextField(
+                    value = text.value,
+                    onValueChange = { text.value = it },
+                    label = { Text("Episodios") },
+                    modifier = Modifier.padding(16.dp),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                Button(
+                    onClick = {
+                        model.addAnime( text.value.toInt())
+                    }
+                ) {
+                    Text(text = "Agregar")
+                }
+            }
 
+
+        }
+    }
 
     Column(
         modifier = Modifier

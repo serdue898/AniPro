@@ -1,8 +1,13 @@
 package com.example.twit.data.mappers.di
 
+import com.example.twit.data.database.entities.AnimeEntity
+import com.example.twit.data.mappers.ItemMapper2ToLocalItem
+import com.example.twit.data.mappers.LocalItem2ToItemMapper
 import com.example.twit.data.mappers.RemoteItem2ToItemMapper
 import com.example.twit.data.mappers.TemplateMapper
 import com.example.twit.data.network.response.AnimeResponse
+import com.example.twit.data.network.response.Node
+import com.example.twit.model.AnimeData
 import com.example.twit.model.AnimeItem
 import dagger.Binds
 import dagger.Module
@@ -15,7 +20,18 @@ abstract class MappersModule {
     @Binds
     abstract fun bindsRemoteItem2ItemMapper(
         remoteItem2ToItemMapper: RemoteItem2ToItemMapper
-    ): TemplateMapper<AnimeResponse, AnimeItem>
+    ): TemplateMapper<Node, AnimeItem>
+
+    @Binds
+    abstract fun bindsLocalItem2ItemMapper(
+        localItem2ToItemMapper: LocalItem2ToItemMapper
+    ): TemplateMapper<AnimeEntity, AnimeData>
+
+    @Binds
+    abstract fun bindsItemMapper2ToLocalItem(
+        itemMapper2ToLocalItem: ItemMapper2ToLocalItem
+    ): TemplateMapper<AnimeData, AnimeEntity>
+
 
 
 

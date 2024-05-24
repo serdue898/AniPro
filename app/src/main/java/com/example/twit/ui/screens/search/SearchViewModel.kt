@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.twit.domain.database.GetAnimeUseCase
 import com.example.twit.domain.network.getAnimeRankingUseCase
-import com.example.twit.domain.network.getAnimeUseCase
+import com.example.twit.domain.network.SearchAnimeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val getTwitUseCase: GetAnimeUseCase,
-    private val getAnimeUseCase: getAnimeUseCase,
+    private val getAnimeUseCase: SearchAnimeUseCase,
     private val getAnimeRankingUseCase: getAnimeRankingUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<SearchStateUI>(SearchStateUI.Loading)
@@ -35,7 +35,7 @@ class SearchViewModel @Inject constructor(
             _uiState.update {
                 try {
                     val res = getAnimeRankingUseCase()
-                    SearchStateUI.Succes(twits = getTwitUseCase.invoke(), animes = res)
+                    SearchStateUI.Succes( animes = res)
                 } catch (e: IOException) {
                     SearchStateUI.Error
                 } catch (e: HttpException) {
@@ -81,7 +81,7 @@ class SearchViewModel @Inject constructor(
                     var res = (uiState.value as SearchStateUI.Succes).animes
                     if (s.length >= 3)
                         res = getAnimeUseCase(s)
-                    SearchStateUI.Succes(twits = getTwitUseCase.invoke(), animes = res, searchResult = res, search = s)
+                    SearchStateUI.Succes(animes = res, searchResult = res, search = s)
                 } catch (e: IOException) {
                     SearchStateUI.Error
                 } catch (e: HttpException) {

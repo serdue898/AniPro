@@ -18,3 +18,6 @@ object SearchScreen:RouteType
 
 @Serializable
 data class InfoScreen(val id:Int):RouteType
+
+@Serializable
+object CalendarScreen:RouteType

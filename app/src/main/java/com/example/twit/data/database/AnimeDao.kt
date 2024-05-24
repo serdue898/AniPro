@@ -11,5 +11,8 @@ interface AnimeDao {
     @Query("SELECT * from AnimeEntity")
     fun getTwits(): Flow<List<AnimeEntity>>
     @Insert
-    suspend fun addTwit(item: AnimeEntity)
+    suspend fun addAnime(item: AnimeEntity)
+
+    @Query("SELECT * from AnimeEntity")
+    fun getAnimebyId(): Flow<List<AnimeEntity>>
 }

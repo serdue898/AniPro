@@ -2,6 +2,7 @@ package com.example.twit.utils
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
@@ -10,6 +11,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import com.example.twit.navigation.CalendarScreen
 import com.example.twit.navigation.MainScreen
 import com.example.twit.navigation.RouteType
 import com.example.twit.navigation.SearchScreen
@@ -19,12 +21,12 @@ import com.example.twit.navigation.SettingsScreen
 fun BottomAppBarLogin(navController: NavController, ruta : RouteType) {
     NavigationBar {
         NavigationBarItem(
-            selected = ruta == MainScreen,
-            onClick = { navController.navigate(MainScreen) },
+            selected = ruta == CalendarScreen,
+            onClick = { navController.navigate(CalendarScreen) },
             icon = {
-                Icon(imageVector = Icons.Filled.Home, contentDescription = null)
+                Icon(imageVector = Icons.Filled.DateRange, contentDescription = null)
             }
-            , label = { Text(text = "Home")}
+            , label = { Text(text = "Calendar")}
         )
         NavigationBarItem(
             selected = ruta == SearchScreen,
