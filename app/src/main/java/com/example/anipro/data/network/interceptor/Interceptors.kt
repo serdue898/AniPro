@@ -9,11 +9,6 @@ import javax.inject.Inject
 class ApiKeyInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
-        // Api key query param from Constants (Uploaded to GIT repository)
-        // val url = originalRequest.url.newBuilder()
-        //    .addQueryParameter("api_key", Constants.API_KEY).build()
-
-        // Api key query param from local.properties (Not uploaded to GIT repository) 
         val url = originalRequest.url.newBuilder()
             .addQueryParameter("api_key", BuildConfig.API_KEY)
             .build()
