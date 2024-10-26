@@ -13,7 +13,7 @@ class ApiKeyInterceptor : Interceptor {
         // val url = originalRequest.url.newBuilder()
         //    .addQueryParameter("api_key", Constants.API_KEY).build()
 
-        // Api key query param from local.properties (Not uploaded to GIT repository) "588d4a2c79f71df470f2013ce46a46ef"
+        // Api key query param from local.properties (Not uploaded to GIT repository) 
         val url = originalRequest.url.newBuilder()
             .addQueryParameter("api_key", BuildConfig.API_KEY)
             .build()
