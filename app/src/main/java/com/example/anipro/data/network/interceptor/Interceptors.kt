@@ -1,5 +1,6 @@
 package com.example.anipro.data.network.interceptor
 
+import com.example.anipro.BuildConfig
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -12,9 +13,9 @@ class ApiKeyInterceptor : Interceptor {
         // val url = originalRequest.url.newBuilder()
         //    .addQueryParameter("api_key", Constants.API_KEY).build()
 
-        // Api key query param from local.properties (Not uploaded to GIT repository)
+        // Api key query param from local.properties (Not uploaded to GIT repository) "588d4a2c79f71df470f2013ce46a46ef"
         val url = originalRequest.url.newBuilder()
-            .addQueryParameter("api_key", "588d4a2c79f71df470f2013ce46a46ef")
+            .addQueryParameter("api_key", BuildConfig.API_KEY)
             .build()
 
         val newRequest = originalRequest.newBuilder().url(url).build()
@@ -29,8 +30,7 @@ class ApiHeaderInterceptor @Inject constructor() : Interceptor {
 
         var token: String?
         runBlocking {
-            token =
-                "588d4a2c79f71df470f2013ce46a46ef"
+            token = BuildConfig.API_KEY
         }
         val headers =
             originalRequest.headers.newBuilder().add("X-MAL-CLIENT-ID", "$token")

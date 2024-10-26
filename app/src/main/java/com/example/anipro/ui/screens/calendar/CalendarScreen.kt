@@ -1,6 +1,7 @@
 package com.example.anipro.ui.screens.calendar
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,11 +12,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -38,8 +39,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.anipro.model.AnimeData
 import com.example.anipro.navigation.CalendarScreen
+import com.example.anipro.navigation.InfoScreen
 import com.example.anipro.utils.BottomAppBarLogin
 import java.time.LocalDate
 import java.time.YearMonth
@@ -69,7 +72,12 @@ fun Calendar(model: CalendarViewModel = hiltViewModel(), navController: NavContr
                 modifier = Modifier
                     .padding(it)
                     .fillMaxSize(),
-                animeEvents = (uiState as CalendarStateUI.Success).animeList
+                animeEvents = (uiState as CalendarStateUI.Success).animeList,
+                animesShowList = (uiState as CalendarStateUI.Success).animesShowList,
+                navigateToInfo = { id ->
+                    navController.navigate(InfoScreen(id))
+                },
+                model = model
             )
 
             is CalendarStateUI.Error -> Text("Error")
@@ -86,7 +94,13 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CalendarScreen(modifier: Modifier, animeEvents: List<AnimeData> = emptyList()) {
+fun CalendarScreen(
+    modifier: Modifier,
+    animeEvents: List<AnimeData> = emptyList(),
+    animesShowList: List<AnimeData> = emptyList(),
+    navigateToInfo: (Int) -> Unit = {},
+    model: CalendarViewModel
+) {
     val today = LocalDate.now()
     val events: List<LocalDate> = animeEvents.map {
         LocalDate.parse(it.dateEnd.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
@@ -134,7 +148,7 @@ fun CalendarScreen(modifier: Modifier, animeEvents: List<AnimeData> = emptyList(
             val displayedMonth = YearMonth.of(today.year, today.month)
                 .plusMonths(page.toLong() - (Int.MAX_VALUE / 2))
             CalendarView(
-                currentMonth = displayedMonth, events = events
+                currentMonth = displayedMonth, events = events, model::onDateSelected
             )
         }
         LazyColumn(
@@ -144,15 +158,41 @@ fun CalendarScreen(modifier: Modifier, animeEvents: List<AnimeData> = emptyList(
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.secondaryContainer)
         ) {
-            items(20) {
-                Text("Event $it", modifier = Modifier.padding(16.dp))
+            items(animesShowList.size) { index ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.secondary)
+                        .clickable {
+                            navigateToInfo(animesShowList[index].id)
+                        },
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = animesShowList[index].title, modifier = Modifier.padding(8.dp))
+                    AsyncImage(
+                        model = animesShowList[index].image,
+                        contentDescription = "Anime Image",
+                        modifier = Modifier
+                            .size(100.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .padding(8.dp)
+                    )
+                }
+
             }
         }
     }
 }
 
 @Composable
-fun CalendarView(currentMonth: YearMonth, events: List<LocalDate>) {
+fun CalendarView(
+    currentMonth: YearMonth,
+    events: List<LocalDate>,
+    onClickDate: (LocalDate) -> Unit = {}
+) {
     val daysInMonth = currentMonth.lengthOfMonth()
     val firstDayOfMonth = LocalDate.of(currentMonth.year, currentMonth.month, 1)
     val startDayOfWeek = firstDayOfMonth.dayOfWeek.value % 7 // to make Sunday = 0
@@ -170,10 +210,11 @@ fun CalendarView(currentMonth: YearMonth, events: List<LocalDate>) {
                             .clip(RoundedCornerShape(50.dp))
                             .background(
                                 color = if (events.contains(date)) MaterialTheme.colorScheme.inversePrimary else Color.Transparent
-                            ),
+                            )
+                            .clickable { onClickDate(date) },
                         contentAlignment = Alignment.Center
                     ) {
-                        BasicText(text = date.dayOfMonth.toString())
+                        Text(text = date.dayOfMonth.toString())
                     }
                 }
                 repeat(7 - week.size) {

@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,7 +23,7 @@ class CalendarViewModel @Inject constructor(
             _uiState.value = CalendarStateUI.Loading
             try {
                 getAnimeUseCase().collect {
-                    _uiState.value = CalendarStateUI.Success(it)
+                    _uiState.value = CalendarStateUI.Success(it, emptyList())
                 }
             } catch (e: Exception) {
                 _uiState.value = CalendarStateUI.Error
@@ -30,5 +31,13 @@ class CalendarViewModel @Inject constructor(
 
         }
 
+    }
+    fun onDateSelected(date:LocalDate) {
+        val animes = (_uiState.value as CalendarStateUI.Success).animeList
+        val animesShowList = animes.filter { anime ->
+            val formatter = anime.dateEnd
+            formatter.isEqual(date)
+        }
+        _uiState.value = CalendarStateUI.Success(animes, animesShowList)
     }
 }

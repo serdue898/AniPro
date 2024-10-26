@@ -11,6 +11,14 @@ interface AnimeClient {
         @Query("q") ignore: String? = "mob",
     ): Response<AnimeResponse>
 
+    @GET("anime/season/{year}/{season}")
+    suspend fun getAnimesSeasonal(
+        @Path("year") year: Int,
+        @Path("season") season: String,
+        @Query("limit") ignore: Int? = 50,
+        @Query("fields") fields: String? = "main_picture,rank",
+    ): Response<AnimeResponse>
+
     @GET("anime/ranking")
     suspend fun getAnimesRanking(
         @Query("ranking_type") ignore: String? = "all",

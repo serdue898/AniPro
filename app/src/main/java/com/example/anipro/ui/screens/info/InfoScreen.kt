@@ -24,10 +24,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -64,7 +66,8 @@ import com.example.anipro.navigation.InfoScreen
 import com.example.anipro.ui.theme.TwitTheme
 import com.example.anipro.ui.theme.md_theme_light_surfaceTint
 import com.example.anipro.utils.BottomAppBarLogin
-import com.example.twit.R
+import com.example.anipro.R
+import com.example.anipro.utils.TopAppBarLogin
 import com.google.accompanist.flowlayout.FlowRow
 
 @Composable
@@ -86,11 +89,8 @@ fun Info(model: InfoViewModel = hiltViewModel(), navController: NavController, i
         // A surface container using the 'background' color from the theme
         Scaffold(
             modifier = Modifier.fillMaxSize(),
-            bottomBar = {
-                BottomAppBarLogin(
-                    navController = navController,
-                    ruta = InfoScreen(idAnime)
-                )
+            topBar = {
+                TopAppBarLogin(navController = navController)
             },
             floatingActionButton = {
                 if (uiState is InfoStateUI.Success) {
@@ -150,25 +150,32 @@ fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI, model: InfoViewMod
 
     if (uiState is InfoStateUI.ShowPopup) {
         val text = remember { mutableStateOf("") }
+        if (uiState.anime.num_episodes != 0) {
+            text.value = uiState.anime.num_episodes.toString()
+        }
+        if (uiState.episodes != 0) {
+            text.value = uiState.episodes.toString()
+        }
         Dialog(onDismissRequest = { model.dismissPopUp() }) {
-            Column {
-                TextField(
-                    value = text.value,
-                    onValueChange = { text.value = it },
-                    label = { Text("Episodios") },
-                    modifier = Modifier.padding(16.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
-                Button(
-                    onClick = {
-                        model.addAnime(text.value.toInt())
+            Card {
+                Column {
+                    TextField(
+                        value = text.value,
+                        onValueChange = { text.value = it },
+                        label = { Text("Episodios") },
+                        modifier = Modifier.padding(16.dp),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+                    Button(
+                        onClick = {
+                            model.addAnime(text.value.toInt())
+                        },
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(text = "Agregar")
                     }
-                ) {
-                    Text(text = "Agregar")
                 }
             }
-
-
         }
     }
 
@@ -318,10 +325,10 @@ fun Content() {
 @Composable
 fun CustomOutlinedBox(
     modifier: Modifier = Modifier,
-    borderColor: Color = Color.Black,
+    borderColor: Color = MaterialTheme.colorScheme.primary,
     borderWidth: Float = 1f,
     cornerText: String,
-    cornerTextBackgroundColor: Color = Color.White,
+    cornerTextBackgroundColor: Color = MaterialTheme.colorScheme.background,
     content: @Composable () -> Unit
 ) {
 

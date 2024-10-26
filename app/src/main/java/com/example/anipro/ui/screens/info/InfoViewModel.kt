@@ -4,12 +4,15 @@ package com.example.anipro.ui.screens.info
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.anipro.domain.database.AddAnimeUseCase
+import com.example.anipro.domain.database.GetAnimeByIdUseCase
 import com.example.anipro.domain.network.getAnimeInfoUseCase
 import com.example.anipro.model.AnimeData
+import com.example.anipro.ui.screens.main.viewmodel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -21,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class InfoViewModel @Inject constructor(
     private val getAnimeInfoUseCase: getAnimeInfoUseCase,
-    private val addAnimeUseCase: AddAnimeUseCase
+    private val addAnimeUseCase: AddAnimeUseCase,
+    private val getAnimeByIdUseCase: GetAnimeByIdUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<InfoStateUI>(InfoStateUI.Loading)
     val uiState: StateFlow<InfoStateUI> = _uiState.asStateFlow()
@@ -55,16 +59,22 @@ class InfoViewModel @Inject constructor(
                     id = anime.id,
                     episodes = episodes,
                     dateEnd = endDate,
-                    dateStart = startDate
+                    dateStart = startDate,
+                    title = anime.title,
+                    image = anime.main_picture.medium,
                 )
                 addAnimeUseCase.invoke(animeData)
+                _uiState.value = InfoStateUI.Success(anime)
             }
         }
     }
 
     fun showPopUp() {
-        val anime = (_uiState.value as InfoStateUI.Success).anime
-        _uiState.value = InfoStateUI.ShowPopup(anime)
+        viewModelScope.launch {
+            val anime = (_uiState.value as InfoStateUI.Success).anime
+            val episodes = getAnimeByIdUseCase(anime.id).firstOrNull()?.firstOrNull()?.episodes ?: 0
+            _uiState.value = InfoStateUI.ShowPopup(anime,episodes)
+        }
     }
 
     fun dismissPopUp() {

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.anipro.domain.database.GetAnimeUseCase
 import com.example.anipro.domain.network.SearchAnimeUseCase
 import com.example.anipro.domain.network.getAnimeRankingUseCase
+import com.example.anipro.domain.network.getAnimeSeason
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +21,8 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val getTwitUseCase: GetAnimeUseCase,
     private val getAnimeUseCase: SearchAnimeUseCase,
-    private val getAnimeRankingUseCase: getAnimeRankingUseCase
+    private val getAnimeRankingUseCase: getAnimeRankingUseCase,
+    private val getAnimeSeasonUseCase: getAnimeSeason
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<SearchStateUI>(SearchStateUI.Loading)
     val uiState: StateFlow<SearchStateUI> = _uiState.asStateFlow()
@@ -34,7 +36,7 @@ class SearchViewModel @Inject constructor(
             _uiState.update { SearchStateUI.Loading }
             _uiState.update {
                 try {
-                    val res = getAnimeRankingUseCase()
+                    val res = getAnimeSeasonUseCase(2024, "spring")
                     SearchStateUI.Succes(animes = res)
                 } catch (e: IOException) {
                     SearchStateUI.Error

@@ -4,7 +4,8 @@ import com.example.anipro.model.AnimeData
 
 open class CalendarStateUI {
     data class Success(
-        val animeList: List<AnimeData>
+        val animeList: List<AnimeData>,
+        val animesShowList: List<AnimeData>
     ) : CalendarStateUI()
 
     object Error : CalendarStateUI()

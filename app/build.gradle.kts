@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -7,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.twit"
+    namespace = "com.example.anipro"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.twit"
+        applicationId = "com.example.anipro"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
@@ -21,6 +23,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+        buildConfigField("String", "API_KEY", properties.getProperty("API_KEY"))
+
     }
 
     buildTypes {
@@ -40,6 +46,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     composeOptions {

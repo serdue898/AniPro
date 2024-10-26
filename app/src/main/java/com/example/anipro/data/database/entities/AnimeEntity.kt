@@ -8,6 +8,8 @@ import java.time.LocalDate
 data class AnimeEntity(
     @PrimaryKey
     val id: Int,
+    val title: String,
+    val image: String,
     val dateEnd: LocalDate,
     val dateStart: LocalDate,
     val episodes: Int = 0,

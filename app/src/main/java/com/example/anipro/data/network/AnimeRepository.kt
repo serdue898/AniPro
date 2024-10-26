@@ -23,6 +23,18 @@ class AnimeRepository @Inject constructor(
         return result!!
     }
 
+    suspend fun getAnimeSeason(year: Int, season: String): List<AnimeItem> {
+        var result: List<AnimeItem>? = null
+        val resultApi = remoteItemsApi.getAnimesSeasonal(year, season)
+        val data = resultApi.handleRequest { data ->
+            data.data.map { remoteItem2ItemMapper.map(it.node) }
+        }
+        data.handleNetworkResult { data -> result = data }
+        //ordenar por el ranking
+        result = result?.sortedBy { it.rank }
+        return result!!
+    }
+
     suspend fun getAnimeRanking(): List<AnimeItem> {
         var result: List<AnimeItem>? = null
         val resultApi = remoteItemsApi.getAnimesRanking()
@@ -30,6 +42,7 @@ class AnimeRepository @Inject constructor(
             data.data.map { remoteItem2ItemMapper.map(it.node) }
         }
         data.handleNetworkResult { data -> result = data }
+
         return result!!
     }
 
