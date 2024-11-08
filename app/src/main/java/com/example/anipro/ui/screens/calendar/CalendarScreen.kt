@@ -18,6 +18,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -68,7 +69,7 @@ fun Calendar(model: CalendarViewModel = hiltViewModel(), navController: NavContr
     ) {
         when (uiState) {
             is CalendarStateUI.Loading -> LoadingScreen(modifier = Modifier.fillMaxSize())
-            is CalendarStateUI.Success -> CalendarScreen(
+            is CalendarStateUI.Success -> CalendarList(
                 modifier = Modifier
                     .padding(it)
                     .fillMaxSize(),
@@ -83,15 +84,76 @@ fun Calendar(model: CalendarViewModel = hiltViewModel(), navController: NavContr
             is CalendarStateUI.Error -> Text("Error")
         }
     }
-
 }
 
 @Composable
-fun LoadingScreen(modifier: Modifier = Modifier) {
-    Box(modifier = modifier) {
-        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+fun CalendarList(
+    modifier: Modifier,
+    animeEvents: List<AnimeData> = emptyList(),
+    animesShowList: List<AnimeData> = emptyList(),
+    navigateToInfo: (Int) -> Unit = {},
+    model: CalendarViewModel
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+
+        val pagerState = rememberPagerState(initialPage = Int.MAX_VALUE / 2, pageCount = { 2 })
+        val currentPage by remember { derivedStateOf { pagerState.currentPage - (Int.MAX_VALUE / 2) } }
+        val movePage = remember { mutableIntStateOf(pagerState.currentPage) }
+        LaunchedEffect(movePage.intValue) {
+            pagerState.animateScrollToPage(movePage.intValue)
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(
+                onClick = {
+                    movePage.intValue = 0
+                }, colors = ButtonDefaults.buttonColors(
+                    containerColor = if (pagerState.currentPage == 0) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text("Calendar")
+            }
+            Button(
+                onClick = {
+                    movePage.intValue = 1
+                }, colors = ButtonDefaults.buttonColors(
+                    containerColor = if (pagerState.currentPage == 1) MaterialTheme.colorScheme.primary
+                    else MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text("List")
+            }
+        }
+        HorizontalPager(
+            state = pagerState,
+            beyondViewportPageCount = 1
+        ) { page ->
+            if (page == 0) {
+                CalendarScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    animeEvents = animeEvents,
+                    animesShowList = animesShowList,
+                    navigateToInfo = navigateToInfo,
+                    model = model
+                )
+            } else {
+                AnimeList(animesShowList = animeEvents, navigateToInfo = navigateToInfo, modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
     }
+
+
 }
+
 
 @Composable
 fun CalendarScreen(
@@ -105,6 +167,8 @@ fun CalendarScreen(
     val events: List<LocalDate> = animeEvents.map {
         LocalDate.parse(it.dateEnd.toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     }
+
+
     val pagerState =
         rememberPagerState(initialPage = Int.MAX_VALUE / 2, pageCount = { Int.MAX_VALUE })
     val currentPage by remember { derivedStateOf { pagerState.currentPage - (Int.MAX_VALUE / 2) } }
@@ -151,15 +215,27 @@ fun CalendarScreen(
                 currentMonth = displayedMonth, events = events, model::onDateSelected
             )
         }
-        LazyColumn(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.secondaryContainer)
-        ) {
-            items(animesShowList.size) { index ->
+        AnimeList(animesShowList = animesShowList, navigateToInfo = navigateToInfo, modifier = Modifier.weight(1f))
+    }
+}
+
+
+
+@Composable
+fun AnimeList( animesShowList: List<AnimeData>, navigateToInfo: (Int) -> Unit = {}, modifier: Modifier = Modifier) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.secondaryContainer)
+    ) {
+        items(animesShowList.size) { index ->
+            Column {
+                if (index == 0 || animesShowList[index].dateEnd != animesShowList[index - 1].dateEnd) {
+                    Text(text = "${animesShowList[index].dateEnd}",modifier = Modifier.align(Alignment.CenterHorizontally))
+                }
                 Row(
+
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
@@ -181,11 +257,18 @@ fun CalendarScreen(
                             .padding(8.dp)
                     )
                 }
-
             }
         }
     }
 }
+
+@Composable
+fun LoadingScreen(modifier: Modifier = Modifier) {
+    Box(modifier = modifier) {
+        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+    }
+}
+
 
 @Composable
 fun CalendarView(
