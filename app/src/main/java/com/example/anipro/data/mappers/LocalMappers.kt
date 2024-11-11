@@ -10,7 +10,6 @@ class LocalItem2ToItemMapper @Inject constructor() : TemplateMapper<AnimeEntity,
         return AnimeData(
             id = input.id,
             dateStart = input.dateStart,
-            episodes = input.episodes,
             dateEnd = input.dateEnd,
             title = input.title,
             image = input.image
@@ -23,7 +22,6 @@ class ItemMapper2ToLocalItem @Inject constructor() : TemplateMapper<AnimeData, A
         return AnimeEntity(
             id = input.id,
             dateStart = input.dateStart,
-            episodes = input.episodes,
             dateEnd = input.dateEnd,
             title = input.title,
             image = input.image

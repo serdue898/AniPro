@@ -5,9 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.anipro.domain.database.AddAnimeUseCase
 import com.example.anipro.domain.database.GetAnimeByIdUseCase
-import com.example.anipro.domain.network.getAnimeInfoUseCase
+import com.example.anipro.domain.network.GetAnimeInfoUseCase
 import com.example.anipro.model.AnimeData
-import com.example.anipro.ui.screens.main.viewmodel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InfoViewModel @Inject constructor(
-    private val getAnimeInfoUseCase: getAnimeInfoUseCase,
+    private val getAnimeInfoUseCase: GetAnimeInfoUseCase,
     private val addAnimeUseCase: AddAnimeUseCase,
     private val getAnimeByIdUseCase: GetAnimeByIdUseCase
 ) : ViewModel() {
@@ -46,18 +45,14 @@ class InfoViewModel @Inject constructor(
         }
 
     }
-
-    fun addAnime(episodes: Int) {
-
+    fun addAnime(endDate: LocalDate) {
         viewModelScope.launch {
             if (_uiState.value is InfoStateUI.ShowPopup) {
                 val anime = (_uiState.value as InfoStateUI.ShowPopup).anime
                 val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
                 val startDate = LocalDate.parse(anime.start_date, formatter)
-                val endDate = startDate.plusWeeks(episodes.toLong())
                 val animeData = AnimeData(
                     id = anime.id,
-                    episodes = episodes,
                     dateEnd = endDate,
                     dateStart = startDate,
                     title = anime.title,
@@ -69,6 +64,25 @@ class InfoViewModel @Inject constructor(
         }
     }
 
+    fun addAnime(episodes: Int) {
+        viewModelScope.launch {
+            if (_uiState.value is InfoStateUI.ShowPopup) {
+                val anime = (_uiState.value as InfoStateUI.ShowPopup).anime
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+                val startDate = LocalDate.parse(anime.start_date, formatter)
+                val endDate = startDate.plusWeeks(episodes.toLong())
+                val animeData = AnimeData(
+                    id = anime.id,
+                    dateEnd = endDate,
+                    dateStart = startDate,
+                    title = anime.title,
+                    image = anime.main_picture.medium,
+                )
+                addAnimeUseCase.invoke(animeData)
+                _uiState.value = InfoStateUI.Success(anime)
+            }
+        }
+    }
     fun showPopUp() {
         viewModelScope.launch {
             val anime = (_uiState.value as InfoStateUI.Success).anime

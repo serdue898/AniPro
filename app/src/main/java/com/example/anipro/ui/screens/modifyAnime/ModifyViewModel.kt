@@ -1,11 +1,9 @@
-package com.example.anipro.ui.screens.main
+package com.example.anipro.ui.screens.modifyAnime
 
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.anipro.domain.database.GetAnimeUseCase
-import com.example.anipro.domain.network.getAnimeRankingUseCase
-import com.example.anipro.domain.network.GetAnimeSeason
+import com.example.anipro.domain.network.GetAnimeInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,29 +15,25 @@ import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
-    private val getTwitUseCase: GetAnimeUseCase,
-    private val getAnimeRankingUseCase: getAnimeRankingUseCase,
-    private val getAnimeSeason: GetAnimeSeason
+class ModifyViewModel @Inject constructor(
+    private val getAnimeInfoUseCase: GetAnimeInfoUseCase
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<MainStateUI>(MainStateUI.Loading)
-    val uiState: StateFlow<MainStateUI> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<ModifyStateUI>(ModifyStateUI.Loading)
+    val uiState: StateFlow<ModifyStateUI> = _uiState.asStateFlow()
 
     init {
-        getAnimes()
-    }
 
-    private fun getAnimes() {
+    }
+    fun getAnimeInfo(id: Int) {
         viewModelScope.launch {
-            _uiState.update { MainStateUI.Loading }
+            _uiState.update { ModifyStateUI.Loading }
             _uiState.update {
                 try {
-                    val res = getAnimeSeason( year = 2024 , season ="fall")
-                    MainStateUI.Success(animes = res)
+                    ModifyStateUI.Success(anime = getAnimeInfoUseCase.invoke(anime_id = id))
                 } catch (e: IOException) {
-                    MainStateUI.Error
+                    ModifyStateUI.Error
                 } catch (e: HttpException) {
-                    MainStateUI.Error
+                    ModifyStateUI.Error
                 }
             }
         }

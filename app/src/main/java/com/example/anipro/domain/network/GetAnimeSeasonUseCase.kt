@@ -4,7 +4,7 @@ import com.example.anipro.data.network.AnimeRepository
 import com.example.anipro.model.AnimeItem
 import javax.inject.Inject
 
-class getAnimeSeason @Inject constructor(private val repository: AnimeRepository) {
+class GetAnimeSeason @Inject constructor(private val repository: AnimeRepository) {
     suspend operator fun invoke( year:Int,season:String): List<AnimeItem> {
         return repository.getAnimeSeason(year,season)
 
