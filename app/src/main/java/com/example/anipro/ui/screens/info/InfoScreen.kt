@@ -159,14 +159,8 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI, model: InfoViewModel) {
-    val anime = if (uiState is InfoStateUI.ShowPopup) {
-        uiState.anime
-    } else {
-        (uiState as InfoStateUI.Success).anime
-    }
-    if (uiState is InfoStateUI.ShowPopup) {
-        Popup(uiState, model)
-    }
+    val anime = (uiState as InfoStateUI.Success).anime
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -300,138 +294,7 @@ fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI, model: InfoViewMod
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Popup(uiState: InfoStateUI.ShowPopup, model: InfoViewModel) {
-    val text = remember { mutableStateOf("") }
-    if (uiState.anime.num_episodes != 0) {
-        text.value = uiState.anime.num_episodes.toString()
-    }
-    if (uiState.episodes != 0) {
-        text.value = uiState.episodes.toString()
-    }
-    Dialog(onDismissRequest = { model.dismissPopUp() }) {
-        Card {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                var addType by remember { mutableIntStateOf(0) }
-                Text(text = "Agregar Anime", modifier = Modifier.padding(16.dp))
-                Row {
-                    RadioButton(selected = (addType == 0), onClick = { addType = 0 })
-                    Text(text = "Episodios", Modifier.align(Alignment.CenterVertically))
-                    RadioButton(selected = (addType == 1), onClick = { addType = 1 })
-                    Text(text = "Fecha", Modifier.align(Alignment.CenterVertically))
-                }
-                if (addType == 1) {
 
-                    val state = rememberDatePickerState()
-
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        DatePicker(
-                            state = state,
-                            showModeToggle = false,
-                            modifier = Modifier.wrapContentSize()
-                        )
-                    }
-
-
-
-                    Button(
-                        onClick = {
-                            val selectedDate = state.selectedDateMillis?.let { millis ->
-                                Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault())
-                                    .toLocalDate()
-                            }
-                            model.addAnime(selectedDate!!)
-                        },
-                        modifier = Modifier.padding(4.dp)
-                    ) {
-                        Text(text = "Agregar")
-                    }
-                } else {
-                    TextField(
-                        value = text.value,
-                        onValueChange = { text.value = it },
-                        label = { Text("Episodios") },
-                        modifier = Modifier.padding(16.dp),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                    )
-                    Button(
-                        onClick = {
-
-                            model.addAnime(text.value.toInt())
-                        },
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(text = "Agregar")
-                    }
-                }
-
-            }
-        }
-    }
-
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun Popup2(uiState: InfoStateUI.ShowPopup, model: InfoViewModel) {
-    val text = remember { mutableStateOf("") }
-    if (uiState.anime.num_episodes != 0) {
-        text.value = uiState.anime.num_episodes.toString()
-    }
-    if (uiState.episodes != 0) {
-        text.value = uiState.episodes.toString()
-    }
-    var addType by remember { mutableIntStateOf(0) }
-    DatePickerDialog(
-        onDismissRequest = { model.dismissPopUp() },
-        confirmButton = {
-            TextButton(onClick = { model.dismissPopUp()
-            }) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = { model.dismissPopUp() }) {
-                Text("Cancel")
-            }
-        }
-
-
-    ) {
-
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-
-            Text(text = "Agregar Anime", modifier = Modifier.padding(16.dp))
-            Row {
-                RadioButton(selected = (addType == 0), onClick = { addType = 0 })
-                Text(text = "Episodios", Modifier.align(Alignment.CenterVertically))
-                RadioButton(selected = (addType == 1), onClick = { addType = 1 })
-                Text(text = "Fecha", Modifier.align(Alignment.CenterVertically))
-            }
-            if (addType == 0) {
-
-                val state = rememberDatePickerState()
-
-                DatePicker(state = state)
-
-
-
-            }else{
-                TextField(
-                    value = text.value,
-                    onValueChange = { text.value = it },
-                    label = { Text("Episodios") },
-                    modifier = Modifier.padding(16.dp),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                )
-
-            }
-        }
-    }
-
-
-}
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable

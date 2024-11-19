@@ -110,8 +110,8 @@ fun Twit(paddingValues: PaddingValues, uistate: MainStateUI, navController: NavC
                 .padding(8.dp)) {
                 items(items = animes, key = { item: AnimeItem -> item.id }) {
                     Content(
-                        it.title ?: "",
-                        it.main_picture?.medium ?: "",
+                        it.title,
+                        it.main_picture.medium,
                         it.id,
                         navController
                     )

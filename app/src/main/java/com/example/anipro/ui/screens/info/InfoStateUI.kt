@@ -12,8 +12,4 @@ open class InfoStateUI {
 
     object Error : InfoStateUI()
     object Loading : InfoStateUI()
-    data class ShowPopup(
-        var anime: AnimeItem,
-        var episodes: Int
-    ) : InfoStateUI()
 }

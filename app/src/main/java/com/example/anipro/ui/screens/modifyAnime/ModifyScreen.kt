@@ -155,12 +155,13 @@ fun Twit(
             }
         }
 
-
+        val context = LocalContext.current
 
         val text = remember { mutableStateOf("") }
+        text.value = uistate.anime.num_episodes.toString()
 
         var addType by remember { mutableIntStateOf(0) }
-        var checkedNotification by remember { mutableStateOf(false) }
+        var checkedNotification by remember { mutableStateOf(uistate.isNotification) }
         Row {
             Checkbox(checked = checkedNotification, onCheckedChange = { checkedNotification = it})
             Text(text = "Notificar episodios nuevos", Modifier.align(Alignment.CenterVertically))
@@ -186,13 +187,16 @@ fun Twit(
                 )
             }
 
-
-
             Button(
                 onClick = {
                     val selectedDate = state.selectedDateMillis?.let { millis ->
                         Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault())
                             .toLocalDate()
+                    }
+                    if (selectedDate != null) {
+
+                        model.addAnime(selectedDate , context,checkedNotification)
+                        navController.popBackStack()
                     }
                 },
                 modifier = Modifier
@@ -214,7 +218,8 @@ fun Twit(
                 )
                 Button(
                     onClick = {
-
+                        model.addAnime(text.value.toInt(),context,checkedNotification)
+                        navController.popBackStack()
                     },
                     modifier = Modifier
                         .padding(16.dp)
@@ -225,11 +230,7 @@ fun Twit(
             }
 
         }
-
-
     }
-
-
 }
 
 

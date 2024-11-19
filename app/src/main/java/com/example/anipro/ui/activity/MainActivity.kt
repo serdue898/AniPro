@@ -12,12 +12,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.anipro.navigation.Navigation
 import com.example.anipro.ui.theme.TwitTheme
+import com.example.anipro.utils.NotificationHandler
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        NotificationHandler.createChannel(context = this)
         setContent {
             TwitTheme {
                 // A surface container using the 'background' color from the theme
@@ -25,6 +29,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
                     Navigation()
                 }
             }

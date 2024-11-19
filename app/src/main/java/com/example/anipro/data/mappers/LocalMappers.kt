@@ -12,7 +12,8 @@ class LocalItem2ToItemMapper @Inject constructor() : TemplateMapper<AnimeEntity,
             dateStart = input.dateStart,
             dateEnd = input.dateEnd,
             title = input.title,
-            image = input.image
+            image = input.image,
+            isNotification = input.isNotification
         )
     }
 }
@@ -24,7 +25,8 @@ class ItemMapper2ToLocalItem @Inject constructor() : TemplateMapper<AnimeData, A
             dateStart = input.dateStart,
             dateEnd = input.dateEnd,
             title = input.title,
-            image = input.image
+            image = input.image,
+            isNotification = input.isNotification
         )
     }
 }

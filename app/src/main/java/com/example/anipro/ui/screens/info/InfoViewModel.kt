@@ -23,8 +23,6 @@ import javax.inject.Inject
 @HiltViewModel
 class InfoViewModel @Inject constructor(
     private val getAnimeInfoUseCase: GetAnimeInfoUseCase,
-    private val addAnimeUseCase: AddAnimeUseCase,
-    private val getAnimeByIdUseCase: GetAnimeByIdUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<InfoStateUI>(InfoStateUI.Loading)
     val uiState: StateFlow<InfoStateUI> = _uiState.asStateFlow()
@@ -45,55 +43,5 @@ class InfoViewModel @Inject constructor(
         }
 
     }
-    fun addAnime(endDate: LocalDate) {
-        viewModelScope.launch {
-            if (_uiState.value is InfoStateUI.ShowPopup) {
-                val anime = (_uiState.value as InfoStateUI.ShowPopup).anime
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                val startDate = LocalDate.parse(anime.start_date, formatter)
-                val animeData = AnimeData(
-                    id = anime.id,
-                    dateEnd = endDate,
-                    dateStart = startDate,
-                    title = anime.title,
-                    image = anime.main_picture.medium,
-                )
-                addAnimeUseCase.invoke(animeData)
-                _uiState.value = InfoStateUI.Success(anime)
-            }
-        }
-    }
-
-    fun addAnime(episodes: Int) {
-        viewModelScope.launch {
-            if (_uiState.value is InfoStateUI.ShowPopup) {
-                val anime = (_uiState.value as InfoStateUI.ShowPopup).anime
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-                val startDate = LocalDate.parse(anime.start_date, formatter)
-                val endDate = startDate.plusWeeks(episodes.toLong())
-                val animeData = AnimeData(
-                    id = anime.id,
-                    dateEnd = endDate,
-                    dateStart = startDate,
-                    title = anime.title,
-                    image = anime.main_picture.medium,
-                )
-                addAnimeUseCase.invoke(animeData)
-                _uiState.value = InfoStateUI.Success(anime)
-            }
-        }
-    }
-    fun showPopUp() {
-        viewModelScope.launch {
-            val anime = (_uiState.value as InfoStateUI.Success).anime
-            val episodes = getAnimeByIdUseCase(anime.id).firstOrNull()?.firstOrNull()?.episodes ?: 0
-            _uiState.value = InfoStateUI.ShowPopup(anime,episodes)
-        }
-    }
-
-    fun dismissPopUp() {
-        _uiState.value = InfoStateUI.Success((_uiState.value as InfoStateUI.ShowPopup).anime)
-    }
-
 
 }

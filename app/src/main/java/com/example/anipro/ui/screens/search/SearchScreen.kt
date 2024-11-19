@@ -135,7 +135,7 @@ fun Twit(paddingValues: PaddingValues, uistate: SearchStateUI, navController: Na
                     Content(
                         it.id,
                         it.title,
-                        it.main_picture.medium ?: "",
+                        it.main_picture.medium,
                         navController
                     )
                 }

@@ -1,4 +1,3 @@
 package com.example.anipro.navigation
 
-interface RouteType {
-}
+interface RouteType

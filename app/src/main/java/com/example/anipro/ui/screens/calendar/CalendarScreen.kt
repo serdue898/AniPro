@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -121,7 +119,7 @@ fun CalendarList(
                     else MaterialTheme.colorScheme.secondary
                 )
             ) {
-                Text("Calendar")
+                Text("List")
             }
             Button(
                 onClick = {
@@ -131,14 +129,14 @@ fun CalendarList(
                     else MaterialTheme.colorScheme.secondary
                 )
             ) {
-                Text("List")
+                Text("Calendar")
             }
         }
         HorizontalPager(
             state = pagerState,
             beyondViewportPageCount = 1
         ) { page ->
-            if (page == 0) {
+            if (page == 1) {
                 CalendarScreen(
                     modifier = Modifier.fillMaxSize(),
                     animeEvents = animeEvents,
@@ -225,16 +223,17 @@ fun CalendarScreen(
 
 @Composable
 fun AnimeList( animesShowList: List<AnimeData>, navigateToInfo: (Int) -> Unit = {}, modifier: Modifier = Modifier) {
+    val animeSorted = animesShowList.sortedBy { it.dateEnd }
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.secondaryContainer)
     ) {
-        items(animesShowList.size) { index ->
+        items(animeSorted.size) { index ->
             Column {
-                if (index == 0 || animesShowList[index].dateEnd != animesShowList[index - 1].dateEnd) {
-                    Text(text = "${animesShowList[index].dateEnd}",modifier = Modifier.align(Alignment.CenterHorizontally))
+                if (index == 0 || animeSorted[index].dateEnd != animeSorted[index - 1].dateEnd) {
+                    Text(text = "${animeSorted[index].dateEnd}",modifier = Modifier.align(Alignment.CenterHorizontally))
                 }
                 Row(
 
@@ -244,16 +243,16 @@ fun AnimeList( animesShowList: List<AnimeData>, navigateToInfo: (Int) -> Unit = 
                         .clip(RoundedCornerShape(16.dp))
                         .background(MaterialTheme.colorScheme.inversePrimary)
                         .clickable {
-                            navigateToInfo(animesShowList[index].id)
+                            navigateToInfo(animeSorted[index].id)
                         },
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = animesShowList[index].title, modifier = Modifier.padding(8.dp).fillMaxWidth(
+                    Text(text = animeSorted[index].title, modifier = Modifier.padding(8.dp).fillMaxWidth(
                         0.7F
                     ))
                     AsyncImage(
-                        model = animesShowList[index].image,
+                        model = animeSorted[index].image,
                         contentDescription = "Anime Image",
                         modifier = Modifier.fillMaxHeight()
                             .clip(RoundedCornerShape(16.dp))
