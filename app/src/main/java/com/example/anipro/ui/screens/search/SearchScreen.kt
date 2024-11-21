@@ -8,18 +8,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -41,13 +41,11 @@ import com.example.anipro.ui.theme.TwitTheme
 import com.example.anipro.utils.BottomAppBarLogin
 import com.example.anipro.utils.SearchBarAction
 
-var viewmodel: SearchViewModel? = null
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun Search(model: SearchViewModel = hiltViewModel(), navController: NavController) {
-    viewmodel = model
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val uiState by produceState<SearchStateUI>(
@@ -65,10 +63,17 @@ fun Search(model: SearchViewModel = hiltViewModel(), navController: NavControlle
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 if (uiState is SearchStateUI.Succes) {
+                    val search = remember { mutableStateOf("") }
                     SearchBarAction(
-                        query = (uiState as SearchStateUI.Succes).search,
-                        onQueryChange = { model.onSearchTextChange(it) },
-                        onSearch = { model.onSearch(it) },
+                        query = search.value,
+                        onQueryChange = {
+                            search.value = it
+                            model.searchNames(search.value)
+                        },
+                        onSearch = {
+                            search.value = it
+                            model.onSearch(search.value)
+                        },
                         active = (uiState as SearchStateUI.Succes).isSearching,
                         onActiveChange = { model.onToogleSearch() },
                         list = (uiState as SearchStateUI.Succes).searchResult
@@ -145,15 +150,15 @@ fun Twit(paddingValues: PaddingValues, uistate: SearchStateUI, navController: Na
 }
 
 @Composable
-fun Content(id: Int, title: String, main_picture: String, navController: NavController) {
+fun Content(id: Int, title: String, mainPicture: String, navController: NavController) {
     Text(text = title, modifier = Modifier.padding(8.dp))
-    if (main_picture.isNotEmpty()) {
+    if (mainPicture.isNotEmpty()) {
         Card(modifier = Modifier.clickable {
             navController.navigate(InfoScreen(id))
         }) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(main_picture)
+                    .data(mainPicture)
                     .build(),
                 contentDescription = "anime picture medium",
                 modifier = Modifier.fillMaxWidth(),

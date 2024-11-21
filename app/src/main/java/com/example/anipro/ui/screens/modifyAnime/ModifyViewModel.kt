@@ -80,8 +80,8 @@ class ModifyViewModel @Inject constructor(
                 val targetDayOfWeekString = anime.broadcast.day_of_the_week
                 val targetDayOfWeek = DayOfWeek.valueOf(targetDayOfWeekString.uppercase(Locale.getDefault()))
                 val daysUntilTarget = (targetDayOfWeek.value - today.dayOfWeek.value + 7) % 7
-                //today.plusDays(daysUntilTarget.toLong()).atStartOfDay(ZoneId.systemDefault()).plusHours(9).toInstant()
-                LocalDateTime.now().plusSeconds(5).atZone(ZoneId.systemDefault()).toInstant()
+                today.plusDays(daysUntilTarget.toLong()).atStartOfDay(ZoneId.systemDefault()).plusHours(9).toInstant()
+
             }else{
                 endDate.atStartOfDay(ZoneId.systemDefault()).plusHours(9).toInstant()
 

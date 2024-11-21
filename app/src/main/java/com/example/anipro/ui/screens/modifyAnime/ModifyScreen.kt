@@ -157,8 +157,7 @@ fun Twit(
 
         val context = LocalContext.current
 
-        val text = remember { mutableStateOf("") }
-        text.value = uistate.anime.num_episodes.toString()
+        val text = remember { mutableStateOf(uistate.anime.num_episodes.toString()) }
 
         var addType by remember { mutableIntStateOf(0) }
         var checkedNotification by remember { mutableStateOf(uistate.isNotification) }

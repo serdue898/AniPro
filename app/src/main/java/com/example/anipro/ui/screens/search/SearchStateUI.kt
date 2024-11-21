@@ -11,7 +11,6 @@ open class SearchStateUI {
         var likesCliked: Boolean = false,
         var likes: Int = 0,
         var animes: List<AnimeItem>,
-        var search: String = "",
         val isSearching: Boolean = false,
         var searchResult: List<AnimeItem> = emptyList()
     ) : SearchStateUI()

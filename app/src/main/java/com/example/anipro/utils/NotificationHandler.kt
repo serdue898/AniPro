@@ -29,7 +29,7 @@ class NotificationHandler : BroadcastReceiver() {
         fun createChannel(@ApplicationContext context: Context) {
             val channel = NotificationChannel(
                 MY_CHANNEL_ID,
-                "MySuperChannel",
+                "animeNotifications",
                 NotificationManager.IMPORTANCE_DEFAULT
             ).apply {
                 description = "animes pendientes"

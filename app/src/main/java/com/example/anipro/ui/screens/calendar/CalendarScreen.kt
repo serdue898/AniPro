@@ -117,7 +117,8 @@ fun CalendarList(
                 }, colors = ButtonDefaults.buttonColors(
                     containerColor = if (pagerState.currentPage == 0) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.secondary
-                )
+                ),
+                modifier = Modifier.weight(1f)
             ) {
                 Text("List")
             }
@@ -127,7 +128,8 @@ fun CalendarList(
                 }, colors = ButtonDefaults.buttonColors(
                     containerColor = if (pagerState.currentPage == 1) MaterialTheme.colorScheme.primary
                     else MaterialTheme.colorScheme.secondary
-                )
+                ),
+                modifier = Modifier.weight(1f)
             ) {
                 Text("Calendar")
             }
@@ -169,8 +171,7 @@ fun CalendarScreen(
     }
 
 
-    val pagerState =
-        rememberPagerState(initialPage = Int.MAX_VALUE / 2, pageCount = { Int.MAX_VALUE })
+    val pagerState = rememberPagerState(initialPage = Int.MAX_VALUE / 2, pageCount = { Int.MAX_VALUE })
     val currentPage by remember { derivedStateOf { pagerState.currentPage - (Int.MAX_VALUE / 2) } }
     val currentMonth by remember {
         derivedStateOf {
