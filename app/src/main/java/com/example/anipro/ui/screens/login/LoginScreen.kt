@@ -37,8 +37,6 @@ import com.example.anipro.ui.theme.animeTypography
 
 @Composable
 fun Login(model: LoginViewModel = viewModel(), navController: NavController) {
-    TwitTheme {
-        // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
@@ -46,7 +44,7 @@ fun Login(model: LoginViewModel = viewModel(), navController: NavController) {
 
             Content(model, navController)
         }
-    }
+
 }
 
 @Composable

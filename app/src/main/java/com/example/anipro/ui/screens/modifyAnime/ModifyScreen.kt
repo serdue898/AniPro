@@ -57,7 +57,7 @@ import java.time.ZoneId
 
 
 
-@SuppressLint("StateFlowValueCalledInComposition")
+
 @Composable
 fun Modify(model: ModifyViewModel = hiltViewModel(), navController: NavController, idAnime: Int) {
 
@@ -74,8 +74,6 @@ fun Modify(model: ModifyViewModel = hiltViewModel(), navController: NavControlle
     LaunchedEffect(key1 = true) {
         model.getAnimeInfo(idAnime)
     }
-    TwitTheme {
-        // A surface container using the 'background' color from the theme
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = { TopAppBarLogin(navController = navController) },
@@ -98,7 +96,7 @@ fun Modify(model: ModifyViewModel = hiltViewModel(), navController: NavControlle
 
             }
         )
-    }
+
 }
 
 @Composable
@@ -117,7 +115,6 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun Twit(
     paddingValues: PaddingValues,

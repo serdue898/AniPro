@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.anipro.data.dataStore.DataStore
 import com.example.anipro.ui.screens.modifyAnime.ModifyStateUI
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,24 +13,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class SettingsViewModel @Inject constructor(
-    val dataStore: DataStore
+    private val dataStore: DataStore
 ) : ViewModel(){
     private val _uiState = MutableStateFlow<SettingsStateUI>(SettingsStateUI.Loading)
     val uiState: StateFlow<SettingsStateUI> = _uiState.asStateFlow()
 
 
-    init {
-        viewModelScope.launch {
-            _uiState.update {
-                SettingsStateUI.Success(
-                    theme = dataStore.getTheme().first(),
-                    color = dataStore.getColorTheme().first(),
-                    grid = dataStore.getGridType().first()
-                )
-            }
-        }
-    }
+
     fun saveTheme(value: String) {
         if (_uiState.value is SettingsStateUI.Success){
             _uiState.update {
@@ -75,6 +67,18 @@ class SettingsViewModel @Inject constructor(
         }
         viewModelScope.launch {
             dataStore.saveGridType(value)
+        }
+    }
+
+    fun getSettings() {
+        viewModelScope.launch {
+            _uiState.update {
+                SettingsStateUI.Success(
+                    theme = dataStore.getTheme().first(),
+                    color = dataStore.getColorTheme().first(),
+                    grid = dataStore.getGridType().first()
+                )
+            }
         }
     }
 

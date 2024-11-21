@@ -57,8 +57,6 @@ fun Search(model: SearchViewModel = hiltViewModel(), navController: NavControlle
             model.uiState.collect { value = it }
         }
     }
-    TwitTheme {
-        // A surface container using the 'background' color from the theme
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -104,7 +102,7 @@ fun Search(model: SearchViewModel = hiltViewModel(), navController: NavControlle
 
             }
         )
-    }
+
 }
 
 @Composable

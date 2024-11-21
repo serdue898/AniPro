@@ -39,6 +39,7 @@ class ModifyViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<ModifyStateUI>(ModifyStateUI.Loading)
     val uiState: StateFlow<ModifyStateUI> = _uiState.asStateFlow()
 
+
     fun getAnimeInfo(id: Int) {
         viewModelScope.launch {
             _uiState.update { ModifyStateUI.Loading }

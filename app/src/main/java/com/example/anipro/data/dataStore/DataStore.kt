@@ -9,12 +9,10 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
+private const val DATA_STORE_NAME = "settings"
+private val Context.dataStore by preferencesDataStore(name = DATA_STORE_NAME)
 class DataStore @Inject constructor(@ApplicationContext val context: Context){
-    companion object {
-        private const val DATA_STORE_NAME = "settings"
-        private val Context.dataStore by preferencesDataStore(name = DATA_STORE_NAME)
-    }
+
 
     suspend fun saveTheme( value: String) {
         context.dataStore.edit { settings ->
@@ -39,10 +37,10 @@ class DataStore @Inject constructor(@ApplicationContext val context: Context){
     }
 
     fun getColorTheme() = context.dataStore.data.map { settings ->
-        settings[stringPreferencesKey("color")] ?: "blue"
+        settings[stringPreferencesKey("color")] ?: "rojo"
     }
 
     fun getGridType() = context.dataStore.data.map { settings ->
-        settings[stringPreferencesKey("grid")] ?: "grid"
+        settings[stringPreferencesKey("grid")] ?: "4x4"
     }
 }

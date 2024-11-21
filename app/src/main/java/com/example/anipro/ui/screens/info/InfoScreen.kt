@@ -102,8 +102,6 @@ fun Info(model: InfoViewModel = hiltViewModel(), navController: NavController, i
     LaunchedEffect(key1 = true) {
         model.getAnimeInfo(idAnime)
     }
-    TwitTheme {
-        // A surface container using the 'background' color from the theme
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -139,7 +137,7 @@ fun Info(model: InfoViewModel = hiltViewModel(), navController: NavController, i
 
             }
         )
-    }
+
 }
 
 @Composable

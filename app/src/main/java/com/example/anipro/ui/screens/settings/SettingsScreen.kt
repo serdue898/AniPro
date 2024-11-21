@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -31,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
@@ -43,7 +45,7 @@ import com.example.anipro.ui.theme.TwitTheme
 import com.example.anipro.utils.BottomAppBarLogin
 
 @Composable
-fun Settings(settingsViewModel: SettingsViewModel = viewModel(), navController: NavController) {
+fun Settings(settingsViewModel: SettingsViewModel = hiltViewModel(), navController: NavController) {
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val uiState by produceState<SettingsStateUI>(
@@ -55,9 +57,10 @@ fun Settings(settingsViewModel: SettingsViewModel = viewModel(), navController: 
             settingsViewModel.uiState.collect { value = it }
         }
     }
+    LaunchedEffect(key1 = true) {
+        settingsViewModel.getSettings()
 
-    TwitTheme {
-        // A surface container using the 'background' color from the theme
+    }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             bottomBar = { BottomAppBarLogin(navController = navController, ruta = SettingsScreen) },
@@ -78,7 +81,7 @@ fun Settings(settingsViewModel: SettingsViewModel = viewModel(), navController: 
         )
 
 
-    }
+
 }
 
 @Composable
@@ -99,7 +102,7 @@ fun SettingsMain(paddingValues: PaddingValues,model: SettingsViewModel, uiState:
             .align(Alignment.CenterHorizontally)
             .padding(16.dp))
 
-        val theme = arrayOf("claro", "oscuro", "default")
+        val theme = arrayOf("light", "dark", "default")
         SettingsType(text = "Dark Mode", icon = R.drawable.baseline_light_mode_24, options = theme, selected = theme.indexOf(uiState.theme), onClick = { model.saveTheme(it) })
         val colors = arrayOf("rojo", "azul", "morado")
         SettingsType(text = "Color theme", icon = R.drawable.baseline_format_paint_24, options = colors, selected = colors.indexOf(uiState.color), onClick = { model.saveColorTheme(it) })
