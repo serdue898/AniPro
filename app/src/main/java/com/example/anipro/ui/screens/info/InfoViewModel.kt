@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.anipro.domain.database.AddAnimeUseCase
 import com.example.anipro.domain.database.GetAnimeByIdUseCase
+import com.example.anipro.domain.database.IsAnimeCreateUseCase
 import com.example.anipro.domain.network.GetAnimeInfoUseCase
 import com.example.anipro.model.AnimeData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class InfoViewModel @Inject constructor(
     private val getAnimeInfoUseCase: GetAnimeInfoUseCase,
+    private val isAnimeCreateUseCase: IsAnimeCreateUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<InfoStateUI>(InfoStateUI.Loading)
     val uiState: StateFlow<InfoStateUI> = _uiState.asStateFlow()
@@ -33,7 +35,8 @@ class InfoViewModel @Inject constructor(
             _uiState.update { InfoStateUI.Loading }
             _uiState.update {
                 try {
-                    InfoStateUI.Success(anime = getAnimeInfoUseCase.invoke(anime_id = id))
+                    val isCreate = isAnimeCreateUseCase(id).firstOrNull() ?: false
+                    InfoStateUI.Success(anime = getAnimeInfoUseCase.invoke(anime_id = id), isAnimeCreate = isCreate)
                 } catch (e: IOException) {
                     InfoStateUI.Error
                 } catch (e: HttpException) {

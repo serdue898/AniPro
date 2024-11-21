@@ -15,8 +15,6 @@ import com.example.anipro.ui.screens.settings.Settings
 @Composable
 fun Navigation() {
     val navController = rememberNavController()
-    //TODO: Change startDestination to LoginScree
-    //ModifyScreen(id = 54857)
     NavHost(navController = navController, startDestination =CalendarScreen) {
         composable<CalendarScreen> { Calendar(navController = navController) }
         composable<LoginScreen> { Login(navController = navController) }

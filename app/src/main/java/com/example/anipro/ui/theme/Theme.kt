@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import com.example.anipro.data.dataStore.DataStore
 
 
 private val LightColors = lightColorScheme(
@@ -77,6 +78,8 @@ fun TwitTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
+
+
     val colors = if (!useDarkTheme) {
         LightColors
     } else {

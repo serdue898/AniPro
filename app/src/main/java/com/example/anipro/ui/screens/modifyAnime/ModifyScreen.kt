@@ -54,13 +54,13 @@ import com.example.anipro.utils.TopAppBarLogin
 import java.time.Instant
 import java.time.ZoneId
 
-var viewmodel: ModifyViewModel? = null
+
 
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun Modify(model: ModifyViewModel = hiltViewModel(), navController: NavController, idAnime: Int) {
-    viewmodel = model
+
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val uiState by produceState<ModifyStateUI>(
         initialValue = ModifyStateUI.Loading,

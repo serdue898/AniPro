@@ -24,6 +24,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -114,8 +115,8 @@ fun Info(model: InfoViewModel = hiltViewModel(), navController: NavController, i
                         navController.navigate(ModifyScreen(idAnime))
                     }) {
                         Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "down"
+                            imageVector = if ((uiState as InfoStateUI.Success).isAnimeCreate)Icons.Default.Edit else Icons.Default.Add,
+                            contentDescription = "modify"
                         )
                     }
                 }

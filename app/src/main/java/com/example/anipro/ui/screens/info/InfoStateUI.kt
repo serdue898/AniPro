@@ -7,7 +7,8 @@ import java.time.LocalDate
 open class InfoStateUI {
 
     data class Success(
-        var anime: AnimeItem
+        var anime: AnimeItem,
+        var isAnimeCreate: Boolean
     ) : InfoStateUI()
 
     object Error : InfoStateUI()
