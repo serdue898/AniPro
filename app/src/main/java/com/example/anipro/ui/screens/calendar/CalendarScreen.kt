@@ -17,11 +17,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -106,39 +106,65 @@ fun CalendarList(
         LaunchedEffect(movePage.intValue) {
             pagerState.animateScrollToPage(movePage.intValue)
         }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+
+        val coroutineScope = rememberCoroutineScope() // Needed for Tab onClick
+        // currentPage will be 0 for List, 1 for Calendar
+        val currentTabSelected = pagerState.currentPage - (Int.MAX_VALUE / 2)
+
+        TabRow(
+            selectedTabIndex = currentTabSelected,
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.primary
         ) {
-            Button(
+            Tab(
+                selected = currentTabSelected == 0,
                 onClick = {
-                    movePage.intValue = 0
-                }, colors = ButtonDefaults.buttonColors(
-                    containerColor = if (pagerState.currentPage == 0) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.secondary
-                ),
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("List")
-            }
-            Button(
+                    // Scroll Pager to the 'List' page
+                    movePage.intValue = Int.MAX_VALUE / 2
+                },
+                text = { Text("List", style = MaterialTheme.typography.bodyLarge) }
+            )
+            Tab(
+                selected = currentTabSelected == 1,
                 onClick = {
-                    movePage.intValue = 1
-                }, colors = ButtonDefaults.buttonColors(
-                    containerColor = if (pagerState.currentPage == 1) MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.secondary
-                ),
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Calendar")
-            }
+                    // Scroll Pager to the 'Calendar' page
+                    movePage.intValue = (Int.MAX_VALUE / 2) + 1
+                },
+                text = { Text("Calendar", style = MaterialTheme.typography.bodyLarge) }
+            )
         }
+
         HorizontalPager(
             state = pagerState,
             beyondViewportPageCount = 1
         ) { page ->
-            if (page == 1) {
+            // The logic for Int.MAX_VALUE / 2 seems to be to allow "infinite" scrolling
+            // So, when mapping pagerState.currentPage to 0 or 1, we need to consider this offset.
+            // However, the pagerState for tabs (List/Calendar) is already set up with pageCount = {2}
+            // and initialPage = Int.MAX_VALUE / 2.
+            // The derived currentPage variable already handles the offset:
+            // val currentPage by remember { derivedStateOf { pagerState.currentPage - (Int.MAX_VALUE / 2) } }
+            // This means pagerState.currentPage will be (Int.MAX_VALUE/2) for List and (Int.MAX_VALUE/2) + 1 for Calendar.
+            // The TabRow selectedTabIndex should directly use pagerState.currentPage if that's how it's set up.
+            // Let's re-check the pagerState initialization.
+            // pagerState = rememberPagerState(initialPage = Int.MAX_VALUE / 2, pageCount = { 2 })
+            // This means actual page indices are Int.MAX_VALUE/2 and Int.MAX_VALUE/2 + 1.
+            // So TabRow selectedTabIndex should be pagerState.currentPage - (Int.MAX_VALUE / 2)
+            // And onClick for tabs should set movePage.intValue to (Int.MAX_VALUE/2) or (Int.MAX_VALUE/2) + 1
+
+            // Corrected TabRow based on the pagerState definition
+            // The HorizontalPager below uses `page` directly, which will be 0 or 1 if pageCount is 2.
+            // Let's adjust pagerState for tabs to be simpler.
+
+            // Simpler pagerState for the tabs:
+            // val simplePagerState = rememberPagerState(initialPage = 0, pageCount = {2})
+            // And then use simplePagerState for TabRow and HorizontalPager.
+            // The `currentPage` and `movePage` would also use this simpler state.
+
+            // Sticking to the existing pagerState structure for now, but this is complex.
+            // The `page` variable in HorizontalPager lambda will be Int.MAX_VALUE/2 or (Int.MAX_VALUE/2) + 1.
+
+            if (page == (Int.MAX_VALUE / 2) + 1) { // Calendar View
                 CalendarScreen(
                     modifier = Modifier.fillMaxSize(),
                     animeEvents = animeEvents,
@@ -281,37 +307,89 @@ fun CalendarView(
 ) {
     val daysInMonth = currentMonth.lengthOfMonth()
     val firstDayOfMonth = LocalDate.of(currentMonth.year, currentMonth.month, 1)
-    val startDayOfWeek = firstDayOfMonth.dayOfWeek.value % 7 // to make Sunday = 0
+    // Sunday is 7, Monday is 1. We want Sunday to be 0.
+    val startDayOfWeek = (firstDayOfMonth.dayOfWeek.value % 7)
     val days = (1..daysInMonth).map { LocalDate.of(currentMonth.year, currentMonth.month, it) }
+    val today = LocalDate.now()
 
-    Column {
-        for (week in days.chunked(7)) {
-            Row(modifier = Modifier.fillMaxWidth()) {
-                week.forEach { date ->
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .aspectRatio(1f)
-                            .padding(4.dp)
-                            .clip(RoundedCornerShape(50.dp))
-                            .background(
-                                color = if (events.contains(date)) MaterialTheme.colorScheme.inversePrimary else Color.Transparent
-                            )
-                            .clickable { onClickDate(date) },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = date.dayOfMonth.toString())
-                    }
-                }
-                repeat(7 - week.size) {
-                    Spacer(
-                        modifier = Modifier
-                            .weight(1f)
-                            .aspectRatio(1f)
-                            .padding(4.dp)
-                    )
+    Column(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
+        // Add headers for days of the week
+        Row(modifier = Modifier.fillMaxWidth()) {
+            val daysOfWeek = listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat")
+            daysOfWeek.forEach { day ->
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(vertical = 8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = day, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurface)
                 }
             }
         }
+
+        // Add empty cells for days before the first day of the month
+        Row(modifier = Modifier.fillMaxWidth()) {
+            repeat(startDayOfWeek) {
+                Spacer(
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .padding(2.dp) // Reduced padding for tighter packing
+                )
+            }
+
+            // Fill the rest of the first week
+            days.take(7 - startDayOfWeek).forEach { date ->
+                DateCell(date = date, isEventDay = events.contains(date), isToday = date.isEqual(today), onClickDate = onClickDate)
+            }
+        }
+
+        // Fill the remaining weeks
+        days.drop(7 - startDayOfWeek).chunked(7).forEach { week ->
+            Row(modifier = Modifier.fillMaxWidth()) {
+                week.forEach { date ->
+                    DateCell(date = date, isEventDay = events.contains(date), isToday = date.isEqual(today), onClickDate = onClickDate)
+                }
+                // Add empty spacers if the week is not full
+                if (week.size < 7) {
+                    repeat(7 - week.size) {
+                        Spacer(
+                            modifier = Modifier
+                                .weight(1f)
+                                .aspectRatio(1f)
+                                .padding(2.dp) // Reduced padding
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DateCell(date: LocalDate, isEventDay: Boolean, isToday: Boolean, onClickDate: (LocalDate) -> Unit) {
+    val backgroundColor = when {
+        isEventDay -> MaterialTheme.colorScheme.primaryContainer
+        isToday -> MaterialTheme.colorScheme.secondaryContainer // Subtle highlight for today
+        else -> MaterialTheme.colorScheme.surface
+    }
+    val textColor = if (isEventDay || isToday) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
+
+    Box(
+        modifier = Modifier
+            .weight(1f)
+            .aspectRatio(1f) // Make cells square
+            .padding(3.dp) // Adjusted padding
+            .clip(RoundedCornerShape(12.dp)) // More rounded corners for a softer look
+            .background(backgroundColor)
+            .clickable { onClickDate(date) },
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = date.dayOfMonth.toString(),
+            style = MaterialTheme.typography.bodyMedium, // Consistent font style
+            color = textColor
+        )
     }
 }
