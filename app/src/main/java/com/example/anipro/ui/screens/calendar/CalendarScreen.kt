@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -349,9 +350,10 @@ fun DateCell(date: LocalDate, isEventDay: Boolean, isToday: Boolean, onClickDate
 
     Box(
         modifier = Modifier
-            .weight(1f)
-            .aspectRatio(1f) // Make cells square
-            .padding(3.dp) // Adjusted padding
+            .weight(1f) // Still allow it to participate in flexible layout
+            .aspectRatio(1f)
+            .padding(3.dp)
+            .sizeIn(maxWidth = 52.dp, maxHeight = 52.dp) // Add this line to constrain size
             .clip(RoundedCornerShape(12.dp)) // More rounded corners for a softer look
             .background(backgroundColor)
             .clickable { onClickDate(date) },
