@@ -314,7 +314,7 @@ fun CalendarView(
 
             // Fill the rest of the first week
             days.take(7 - startDayOfWeek).forEach { date ->
-                DateCell(date = date, isEventDay = events.contains(date), isToday = date.isEqual(today), onClickDate = onClickDate)
+                DateCell(date = date, isEventDay = events.contains(date), isToday = date.isEqual(today), modifier = Modifier.weight(1f), onClickDate = onClickDate)
             }
         }
 
@@ -322,7 +322,7 @@ fun CalendarView(
         days.drop(7 - startDayOfWeek).chunked(7).forEach { week ->
             Row(modifier = Modifier.fillMaxWidth()) {
                 week.forEach { date ->
-                    DateCell(date = date, isEventDay = events.contains(date), isToday = date.isEqual(today), onClickDate = onClickDate)
+                    DateCell(date = date, isEventDay = events.contains(date), isToday = date.isEqual(today), modifier = Modifier.weight(1f),onClickDate = onClickDate)
                 }
                 // Add empty spacers if the week is not full
                 if (week.size < 7) {
@@ -341,7 +341,7 @@ fun CalendarView(
 }
 
 @Composable
-fun DateCell(date: LocalDate, isEventDay: Boolean, isToday: Boolean, onClickDate: (LocalDate) -> Unit) {
+fun DateCell(date: LocalDate, isEventDay: Boolean, isToday: Boolean,modifier: Modifier, onClickDate: (LocalDate) -> Unit) {
     val backgroundColor = when {
         isEventDay -> MaterialTheme.colorScheme.primaryContainer
         isToday -> MaterialTheme.colorScheme.secondaryContainer // Subtle highlight for today
@@ -350,8 +350,8 @@ fun DateCell(date: LocalDate, isEventDay: Boolean, isToday: Boolean, onClickDate
     val textColor = if (isEventDay || isToday) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
 
     Box(
-        modifier = Modifier
-            .weight(1f) // Still allow it to participate in flexible layout
+        modifier = modifier
+            // Still allow it to participate in flexible layout
             .aspectRatio(1f)
             .padding(3.dp)
             .sizeIn(maxWidth = 52.dp, maxHeight = 52.dp) // Add this line to constrain size
