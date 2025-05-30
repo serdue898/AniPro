@@ -38,19 +38,34 @@ android {
             )
         }
     }
+    kapt {
+        javacOptions {
+            // For JDK 9+
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED")
+        }
+    }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         buildConfig = true
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
