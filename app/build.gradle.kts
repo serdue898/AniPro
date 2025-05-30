@@ -49,6 +49,21 @@ android {
         buildConfig = true
         compose = true
     }
+    kapt {
+        javacOptions {
+            // For JDK 9+
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED")
+            option("--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED")
+        }
+    }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
     }

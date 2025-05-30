@@ -100,35 +100,32 @@ fun CalendarList(
             .padding(16.dp)
     ) {
 
-        val pagerState = rememberPagerState(initialPage = Int.MAX_VALUE / 2, pageCount = { 2 })
-        val currentPage by remember { derivedStateOf { pagerState.currentPage - (Int.MAX_VALUE / 2) } }
-        val movePage = remember { mutableIntStateOf(pagerState.currentPage) }
+        val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
+        val selectedTab by remember { derivedStateOf { pagerState.currentPage } }
+        val movePage = remember { mutableIntStateOf(0) } // Initialize with the new initialPage
+
         LaunchedEffect(movePage.intValue) {
             pagerState.animateScrollToPage(movePage.intValue)
         }
 
-        val coroutineScope = rememberCoroutineScope() // Needed for Tab onClick
-        // currentPage will be 0 for List, 1 for Calendar
-        val currentTabSelected = pagerState.currentPage - (Int.MAX_VALUE / 2)
+        // val coroutineScope = rememberCoroutineScope() // Not strictly needed here
 
         TabRow(
-            selectedTabIndex = currentTabSelected,
+            selectedTabIndex = selectedTab, // This is now 0 or 1
             containerColor = MaterialTheme.colorScheme.surface,
             contentColor = MaterialTheme.colorScheme.primary
         ) {
             Tab(
-                selected = currentTabSelected == 0,
+                selected = selectedTab == 0,
                 onClick = {
-                    // Scroll Pager to the 'List' page
-                    movePage.intValue = Int.MAX_VALUE / 2
+                    movePage.intValue = 0 // Scroll Pager to the 'List' page (index 0)
                 },
                 text = { Text("List", style = MaterialTheme.typography.bodyLarge) }
             )
             Tab(
-                selected = currentTabSelected == 1,
+                selected = selectedTab == 1,
                 onClick = {
-                    // Scroll Pager to the 'Calendar' page
-                    movePage.intValue = (Int.MAX_VALUE / 2) + 1
+                    movePage.intValue = 1 // Scroll Pager to the 'Calendar' page (index 1)
                 },
                 text = { Text("Calendar", style = MaterialTheme.typography.bodyLarge) }
             )
@@ -137,37 +134,11 @@ fun CalendarList(
         HorizontalPager(
             state = pagerState,
             beyondViewportPageCount = 1
-        ) { page ->
-            // The logic for Int.MAX_VALUE / 2 seems to be to allow "infinite" scrolling
-            // So, when mapping pagerState.currentPage to 0 or 1, we need to consider this offset.
-            // However, the pagerState for tabs (List/Calendar) is already set up with pageCount = {2}
-            // and initialPage = Int.MAX_VALUE / 2.
-            // The derived currentPage variable already handles the offset:
-            // val currentPage by remember { derivedStateOf { pagerState.currentPage - (Int.MAX_VALUE / 2) } }
-            // This means pagerState.currentPage will be (Int.MAX_VALUE/2) for List and (Int.MAX_VALUE/2) + 1 for Calendar.
-            // The TabRow selectedTabIndex should directly use pagerState.currentPage if that's how it's set up.
-            // Let's re-check the pagerState initialization.
-            // pagerState = rememberPagerState(initialPage = Int.MAX_VALUE / 2, pageCount = { 2 })
-            // This means actual page indices are Int.MAX_VALUE/2 and Int.MAX_VALUE/2 + 1.
-            // So TabRow selectedTabIndex should be pagerState.currentPage - (Int.MAX_VALUE / 2)
-            // And onClick for tabs should set movePage.intValue to (Int.MAX_VALUE/2) or (Int.MAX_VALUE/2) + 1
-
-            // Corrected TabRow based on the pagerState definition
-            // The HorizontalPager below uses `page` directly, which will be 0 or 1 if pageCount is 2.
-            // Let's adjust pagerState for tabs to be simpler.
-
-            // Simpler pagerState for the tabs:
-            // val simplePagerState = rememberPagerState(initialPage = 0, pageCount = {2})
-            // And then use simplePagerState for TabRow and HorizontalPager.
-            // The `currentPage` and `movePage` would also use this simpler state.
-
-            // Sticking to the existing pagerState structure for now, but this is complex.
-            // The `page` variable in HorizontalPager lambda will be Int.MAX_VALUE/2 or (Int.MAX_VALUE/2) + 1.
-
-            if (page == (Int.MAX_VALUE / 2) + 1) { // Calendar View
+        ) { page -> // page will be 0 or 1
+            if (page == 1) { // Calendar View (index 1)
                 CalendarScreen(
                     modifier = Modifier.fillMaxSize(),
-                    animeEvents = animeEvents,
+                    animeEvents = animeEvents, // Pass full list of events
                     animesShowList = animesShowList,
                     navigateToInfo = navigateToInfo,
                     model = model
