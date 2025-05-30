@@ -54,7 +54,6 @@ fun Main(model: MainViewModel = hiltViewModel(), navController: NavController) {
             model.uiState.collect { value = it }
         }
     }
-    TwitTheme {
         // A surface container using the 'background' color from the theme
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -81,7 +80,7 @@ fun Main(model: MainViewModel = hiltViewModel(), navController: NavController) {
 
             }
         )
-    }
+
 }
 
 @Composable
@@ -110,8 +109,8 @@ fun Twit(paddingValues: PaddingValues, uistate: MainStateUI, navController: NavC
                 .padding(8.dp)) {
                 items(items = animes, key = { item: AnimeItem -> item.id }) {
                     Content(
-                        it.title ?: "",
-                        it.main_picture?.medium ?: "",
+                        it.title,
+                        it.main_picture.medium,
                         it.id,
                         navController
                     )

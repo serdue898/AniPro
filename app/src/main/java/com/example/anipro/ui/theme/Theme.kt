@@ -75,12 +75,19 @@ private val DarkColors = darkColorScheme(
 @Composable
 fun TwitTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
+    themePreference: String,
     content: @Composable() () -> Unit
 ) {
-    val colors = if (!useDarkTheme) {
-        LightColors
-    } else {
-        DarkColors
+    val colors = when (themePreference) {
+        "light" -> LightColors
+        "dark" -> DarkColors
+        else -> {
+            if (!useDarkTheme) {
+                LightColors
+            } else {
+                DarkColors
+            }
+        }
     }
 
     MaterialTheme(

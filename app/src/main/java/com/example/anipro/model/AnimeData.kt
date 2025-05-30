@@ -8,5 +8,6 @@ data class AnimeData(
     val image: String,
     val dateEnd: LocalDate,
     val dateStart: LocalDate,
-    val episodes: Int = 0
+    val episodes: Int = 0,
+    val isNotification: Boolean
 )

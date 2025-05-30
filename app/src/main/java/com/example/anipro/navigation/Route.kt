@@ -19,4 +19,7 @@ object SearchScreen : RouteType
 data class InfoScreen(val id: Int) : RouteType
 
 @Serializable
+data class ModifyScreen(val id: Int) : RouteType
+
+@Serializable
 object CalendarScreen : RouteType

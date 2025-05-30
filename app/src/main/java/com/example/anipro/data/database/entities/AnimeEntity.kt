@@ -12,5 +12,5 @@ data class AnimeEntity(
     val image: String,
     val dateEnd: LocalDate,
     val dateStart: LocalDate,
-    val episodes: Int = 0,
+    val isNotification: Boolean
 )

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.anipro.domain.database.GetAnimeUseCase
 import com.example.anipro.domain.network.getAnimeRankingUseCase
+import com.example.anipro.domain.network.GetAnimeSeason
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getTwitUseCase: GetAnimeUseCase,
-    private val getAnimeRankingUseCase: getAnimeRankingUseCase
+    private val getAnimeRankingUseCase: getAnimeRankingUseCase,
+    private val getAnimeSeason: GetAnimeSeason
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<MainStateUI>(MainStateUI.Loading)
     val uiState: StateFlow<MainStateUI> = _uiState.asStateFlow()
@@ -32,7 +34,7 @@ class MainViewModel @Inject constructor(
             _uiState.update { MainStateUI.Loading }
             _uiState.update {
                 try {
-                    val res = getAnimeRankingUseCase()
+                    val res = getAnimeSeason( year = 2024 , season ="fall")
                     MainStateUI.Success(animes = res)
                 } catch (e: IOException) {
                     MainStateUI.Error

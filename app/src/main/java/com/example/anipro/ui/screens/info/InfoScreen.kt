@@ -11,38 +11,50 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -54,6 +66,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -67,8 +80,12 @@ import com.example.anipro.ui.theme.TwitTheme
 import com.example.anipro.ui.theme.md_theme_light_surfaceTint
 import com.example.anipro.utils.BottomAppBarLogin
 import com.example.anipro.R
+import com.example.anipro.navigation.ModifyScreen
+import com.example.anipro.ui.screens.modifyAnime.Modify
 import com.example.anipro.utils.TopAppBarLogin
 import com.google.accompanist.flowlayout.FlowRow
+import java.time.Instant
+import java.time.ZoneId
 
 @Composable
 fun Info(model: InfoViewModel = hiltViewModel(), navController: NavController, idAnime: Int) {
@@ -85,21 +102,19 @@ fun Info(model: InfoViewModel = hiltViewModel(), navController: NavController, i
     LaunchedEffect(key1 = true) {
         model.getAnimeInfo(idAnime)
     }
-    TwitTheme {
-        // A surface container using the 'background' color from the theme
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 TopAppBarLogin(navController = navController)
             },
             floatingActionButton = {
-                if (uiState is InfoStateUI.Success) {
+                if (uiState is InfoStateUI.Success && (uiState as InfoStateUI.Success).anime.status == "currently_airing") {
                     FloatingActionButton(onClick = {
-                        model.showPopUp()
+                        navController.navigate(ModifyScreen(idAnime))
                     }) {
                         Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "down"
+                            imageVector = if ((uiState as InfoStateUI.Success).isAnimeCreate)Icons.Default.Edit else Icons.Default.Add,
+                            contentDescription = "modify"
                         )
                     }
                 }
@@ -122,7 +137,7 @@ fun Info(model: InfoViewModel = hiltViewModel(), navController: NavController, i
 
             }
         )
-    }
+
 }
 
 @Composable
@@ -139,45 +154,11 @@ fun LoadingScreen(modifier: Modifier = Modifier) {
     }
 }
 
+
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI, model: InfoViewModel) {
-    val anime = if (uiState is InfoStateUI.ShowPopup) {
-        uiState.anime
-    } else {
-        (uiState as InfoStateUI.Success).anime
-    }
-
-    if (uiState is InfoStateUI.ShowPopup) {
-        val text = remember { mutableStateOf("") }
-        if (uiState.anime.num_episodes != 0) {
-            text.value = uiState.anime.num_episodes.toString()
-        }
-        if (uiState.episodes != 0) {
-            text.value = uiState.episodes.toString()
-        }
-        Dialog(onDismissRequest = { model.dismissPopUp() }) {
-            Card {
-                Column {
-                    TextField(
-                        value = text.value,
-                        onValueChange = { text.value = it },
-                        label = { Text("Episodios") },
-                        modifier = Modifier.padding(16.dp),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                    )
-                    Button(
-                        onClick = {
-                            model.addAnime(text.value.toInt())
-                        },
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(text = "Agregar")
-                    }
-                }
-            }
-        }
-    }
+    val anime = (uiState as InfoStateUI.Success).anime
 
     Column(
         modifier = Modifier
@@ -311,13 +292,109 @@ fun Anime(paddingValues: PaddingValues, uiState: InfoStateUI, model: InfoViewMod
     }
 }
 
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 fun Content() {
-//    CustomOutlinedBox(
-//        modifier = Modifier.padding(16.dp),
-//        cornerText = "Nombre"
-//    )
+    Dialog(onDismissRequest = { }) {
+        Card {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                var addType by remember { mutableIntStateOf(0) }
+                Text(text = "Agregar Anime", modifier = Modifier.padding(16.dp))
+                Row {
+                    RadioButton(selected = (addType == 0), onClick = { addType = 0 })
+                    Text(text = "Episodios", Modifier.align(Alignment.CenterVertically))
+                    RadioButton(selected = (addType == 1), onClick = { addType = 1 })
+                    Text(text = "Fecha", Modifier.align(Alignment.CenterVertically))
+                }
+                if (addType == 0) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        val state = rememberDatePickerState()
+                        DatePickerDialog(
+                            onDismissRequest = { },
+                            confirmButton = {
+                                TextButton(onClick = {
+                                }) {
+                                    Text("OK")
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = {}) {
+                                    Text("Cancel")
+                                }
+                            },
+                            properties =  DialogProperties(usePlatformDefaultWidth = false)
+
+                        ) {
+                            DatePicker(state = state)
+                        }
+                    }
+                    Button(
+                        onClick = {
+
+                        },
+                        modifier = Modifier.padding(4.dp)
+                    ) {
+                        Text(text = "Agregar")
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun Content2() {
+    DatePickerDialog(
+        onDismissRequest = { },
+        confirmButton = {
+            TextButton(onClick = {
+            }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = {}) {
+                Text("Cancel")
+            }
+        },
+
+    ) {
+
+            Column {
+                var addType by remember { mutableIntStateOf(0) }
+                Text(text = "Agregar Anime", modifier = Modifier.padding(16.dp))
+                Row {
+                    RadioButton(selected = (addType == 0), onClick = { addType = 0 })
+                    Text(text = "Episodios", Modifier.align(Alignment.CenterVertically))
+                    RadioButton(selected = (addType == 1), onClick = { addType = 1 })
+                    Text(text = "Fecha", Modifier.align(Alignment.CenterVertically))
+                }
+                if (addType == 0) {
+
+                    val state = rememberDatePickerState()
+
+                    DatePicker(state = state,modifier = Modifier.weight(1f))
+                   Spacer(modifier = Modifier.padding(16.dp))
+
+
+
+                }else{
+                    TextField(
+                        value = "da",
+                        onValueChange = { },
+                        label = { Text("Episodios") },
+                        modifier = Modifier.padding(16.dp),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
+
+                }
+            }
+        }
 
 
 }

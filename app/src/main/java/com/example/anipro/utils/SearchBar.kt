@@ -58,10 +58,10 @@ fun SearchBarAction(
                 ) {
 
                     TextButton(onClick = {
-                        onSearch(anime.title ?: "")
+                        onSearch(anime.title)
                     }) {
                         Text(
-                            text = anime.title ?: "",
+                            text = anime.title,
                             modifier = Modifier.padding(
                                 start = 8.dp,
                                 top = 4.dp,
@@ -75,7 +75,7 @@ fun SearchBarAction(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         IconButton(
-                            onClick = { onQueryChange(anime.title ?: "") },
+                            onClick = { onQueryChange(anime.title) },
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.baseline_call_made_24),

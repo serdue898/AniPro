@@ -20,6 +20,8 @@ class AnimeRepository @Inject constructor(
 
     fun getAnimebyId(id: Int): Flow<List<AnimeData>> = animeDao.getAnimebyId(id).map { item -> item.map { localItem2ItemMapper.map(it) } }
 
+    fun isAnimeCreate(id: Int): Flow<Boolean> = animeDao.getAnimebyId(id).map { item -> item.isNotEmpty() }
+
     suspend fun addAnimeL(anime: AnimeData) {
         if (animeDao.getAnimebyId(anime.id).map { it.isNotEmpty() }.first()) {
             animeDao.updateAnime(itemMapper2ToLocalItem.map(anime))
