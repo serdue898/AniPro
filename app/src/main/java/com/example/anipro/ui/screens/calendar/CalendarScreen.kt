@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -349,7 +350,6 @@ fun DateCell(date: LocalDate, isEventDay: Boolean, isToday: Boolean, onClickDate
 
     Box(
         modifier = Modifier
-            .weight(1f)
             .aspectRatio(1f) // Make cells square
             .padding(3.dp) // Adjusted padding
             .clip(RoundedCornerShape(12.dp)) // More rounded corners for a softer look
